@@ -1,22 +1,19 @@
 
 import React from 'react';
-import { CircleUser, Menu, Moon, Search, Sun } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   
   const navItems = [
     { title: 'Home', href: '/' },
     { title: 'Topics', href: '#topics' },
-    { title: 'About', href: '#about' },
-    { title: 'FAQs', href: '#faqs' },
-    { title: 'Contact', href: '#contact' }
+    { title: 'About', href: '#about' }
   ];
 
   return (
@@ -41,21 +38,7 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
-            onClick={() => setIsDarkMode(!isDarkMode)}
-          >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full hidden md:flex">
-            <Search className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <CircleUser className="h-5 w-5" />
-          </Button>
+        <div className="flex items-center">
           <Button
             variant="ghost"
             size="icon"
