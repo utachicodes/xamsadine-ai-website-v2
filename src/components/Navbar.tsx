@@ -22,12 +22,9 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg shadow-sm">
       <div className="container flex items-center justify-between h-16 md:h-20">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-islamic-green flex items-center justify-center text-white font-bold text-lg">
-            X
-          </div>
+        <div>
           <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-islamic-green to-islamic-blue">
-            XamSaDine
+            XamSaDine AI
           </span>
         </div>
 

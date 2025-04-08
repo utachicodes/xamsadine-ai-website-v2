@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Facebook, Instagram, Mail, Phone, Twitter, Youtube } from 'lucide-react';
 
@@ -8,11 +7,8 @@ const Footer = () => {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-islamic-green flex items-center justify-center text-white font-bold text-lg">
-                X
-              </div>
-              <span className="font-bold text-xl text-islamic-gold">XamSaDine</span>
+            <div className="mb-4">
+              <span className="font-bold text-xl text-islamic-gold">XamSaDine AI</span>
             </div>
             <p className="text-white/70 mb-4">
               A platform dedicated to providing authentic Islamic knowledge through expert scholars.
@@ -96,7 +92,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-white/10 pt-8 mt-8 text-center text-white/50 text-sm">
-          <p>© {new Date().getFullYear()} XamSaDine Islamic Knowledge Platform. All Rights Reserved.</p>
+          <p>© {new Date().getFullYear()} XamSaDine AI Islamic Knowledge Platform. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
