@@ -2,18 +2,23 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/sonner';
+import { useToast } from '@/hooks/use-toast';
 
 const HeroSection = () => {
   const [question, setQuestion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showWebUI, setShowWebUI] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!question.trim()) {
-      toast.error('Please enter a question');
+      toast({
+        title: "Error",
+        description: "Please enter a question",
+        variant: "destructive"
+      });
       return;
     }
     

@@ -82,11 +82,12 @@ const TopicsSection = () => {
               className="topic-card group"
               onClick={() => handleTopicClick(topic.question)}
             >
-              <div className="mb-4 w-12 h-12 rounded-full bg-gradient-to-br flex items-center justify-center text-white" style={{
-                backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
-                '--tw-gradient-from': topic.gradient.split(' ')[0].split('-')[1],
-                '--tw-gradient-to': topic.gradient.split(' ')[2],
-              }}>
+              <div className="mb-4 w-12 h-12 rounded-full bg-gradient-to-br flex items-center justify-center text-white" 
+                style={{
+                  backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
+                  '--tw-gradient-from': topic.gradient.split(' ')[0].split('-')[1],
+                  '--tw-gradient-to': topic.gradient.split(' ')[2],
+                } as React.CSSProperties}>
                 <topic.icon className="h-6 w-6" />
               </div>
               <h3 className="text-xl font-bold mb-2 group-hover:text-islamic-green transition-colors">
