@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -24,6 +25,15 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				islamic: {
+					green: '#105e36',
+					teal: '#00827f',
+					blue: '#0d3f67',
+					gold: '#c19a30',
+					cream: '#f8f0e0',
+					dark: '#0d1f2d',
+					light: '#f9fafc'
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -84,12 +94,59 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
+				},
+				'pulse-slow': {
+					'0%, 100%': {
+						opacity: '1'
+					},
+					'50%': {
+						opacity: '0.8'
+					}
+				},
+				'rotate-slow': {
+					from: {
+						transform: 'rotate(0deg)'
+					},
+					to: {
+						transform: 'rotate(360deg)'
+					}
+				},
+				'shimmer': {
+					'0%': {
+						backgroundPosition: '-500px 0'
+					},
+					'100%': {
+						backgroundPosition: '500px 0'
+					}
+				},
+        'pattern-rotate': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' }
+        }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite',
+				'pulse-slow': 'pulse-slow 4s ease-in-out infinite',
+				'rotate-slow': 'rotate-slow 20s linear infinite',
+				'shimmer': 'shimmer 3s infinite linear',
+        'pattern-rotate': 'pattern-rotate 40s linear infinite'
+			},
+      backgroundImage: {
+        'islamic-pattern': "url('/pattern.svg')",
+        'hero-gradient': 'linear-gradient(to right, rgba(16, 94, 54, 0.9), rgba(13, 63, 103, 0.9))',
+        'card-gradient': 'linear-gradient(225deg, #105e36 0%, #0d3f67 100%)',
+        'gold-gradient': 'linear-gradient(90deg, #c19a30 0%, #ddb957 50%, #c19a30 100%)'
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

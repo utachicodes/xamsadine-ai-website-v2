@@ -1,0 +1,92 @@
+
+import React from 'react';
+import { CircleUser, Menu, Moon, Search, Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+const Navbar = () => {
+  const isMobile = useIsMobile();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  
+  const navItems = [
+    { title: 'Home', href: '/' },
+    { title: 'Topics', href: '#topics' },
+    { title: 'About', href: '#about' },
+    { title: 'FAQs', href: '#faqs' },
+    { title: 'Contact', href: '#contact' }
+  ];
+
+  return (
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg shadow-sm">
+      <div className="container flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full bg-islamic-green flex items-center justify-center text-white font-bold text-lg">
+            X
+          </div>
+          <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-islamic-green to-islamic-blue">
+            XamSaDine
+          </span>
+        </div>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-1">
+          {navItems.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              className="px-4 py-2 rounded-md text-islamic-dark hover:bg-islamic-cream transition-colors"
+            >
+              {item.title}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            onClick={() => setIsDarkMode(!isDarkMode)}
+          >
+            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+          <Button variant="ghost" size="icon" className="rounded-full hidden md:flex">
+            <Search className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <CircleUser className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full md:hidden"
+            onClick={toggleMenu}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMobile && isMenuOpen && (
+        <div className="absolute top-16 inset-x-0 bg-white shadow-md z-50 py-4 px-6 space-y-4 md:hidden">
+          {navItems.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              className="block py-2 text-islamic-dark hover:text-islamic-green transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.title}
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+  );
+};
+
+export default Navbar;
