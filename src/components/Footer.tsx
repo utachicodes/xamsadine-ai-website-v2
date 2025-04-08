@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Facebook, Instagram, Mail, Phone, Twitter, Youtube } from 'lucide-react';
 
@@ -5,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-islamic-dark text-white pt-16 pb-8">
       <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div>
             <div className="mb-4">
               <span className="font-bold text-xl text-islamic-gold">XamSaDine AI</span>
@@ -27,48 +28,6 @@ const Footer = () => {
                 <Youtube className="w-4 h-4" />
               </a>
             </div>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="/" className="text-white/70 hover:text-islamic-gold transition-colors">Home</a>
-              </li>
-              <li>
-                <a href="#about" className="text-white/70 hover:text-islamic-gold transition-colors">About Us</a>
-              </li>
-              <li>
-                <a href="#topics" className="text-white/70 hover:text-islamic-gold transition-colors">Topics</a>
-              </li>
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Scholars</a>
-              </li>
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Privacy Policy</a>
-              </li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Islamic Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Prayer Times</a>
-              </li>
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Quran Online</a>
-              </li>
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Hadith Collection</a>
-              </li>
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Islamic Calendar</a>
-              </li>
-              <li>
-                <a href="#" className="text-white/70 hover:text-islamic-gold transition-colors">Qibla Direction</a>
-              </li>
-            </ul>
           </div>
           
           <div>
