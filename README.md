@@ -2,25 +2,25 @@
 
 **Xamsadine AI** is an advanced Islamic chatbot that delivers answers grounded in a rich archive of vocal Fatawa data. This second version of the website brings a modern, cleaner interface and enhanced performance, designed to improve user experience and make interactions with the AI smoother through WebUI API integration.
 
-## ✨ What's New in V2
+## What's New in V2
 - **Modern UI/UX Design:** A complete redesign for a more polished and responsive user experience.
 - **Enhanced Search Experience:** Faster input handling with real-time query feedback.
 - **Improved API Handling:** More stable and efficient API communication with better error handling.
 - **SEO & Performance Optimized:** Faster load times and better discoverability across search engines.
 - **Accessibility Enhancements:** Improved support for screen readers, keyboard navigation, and flexible text sizing.
 
-## 🚀 Features
+## Features
 - **User-Friendly Web Interface** – Clean, responsive design for all devices.
 - **Secure API Integration** – Real-time communication with the AI WebUI backend.
 - **Dynamic Fatawa Access** – Ask questions and receive relevant, accurate responses from the Fatawa database.
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Frontend:** React.js (with Tailwind CSS or Bootstrap)
 - **Backend/API Integration:** Fetch or Axios for API calls
 - **State Management:** Context API or Redux (if needed)
 - **Deployment:** Vercel, Netlify, AWS, or custom VPS
 
-## ⚙️ Getting Started
+## Getting Started
 
 ### 1. Clone the Repository
 ```bash
@@ -41,7 +41,7 @@ npm start
 ### 4. Open in Browser
 Navigate to `http://localhost:3000` to view the website locally.
 
-## 📦 Deployment Guide
+## Deployment Guide
 
 1. **Build for Production:**
 ```bash
@@ -57,7 +57,7 @@ Upload your `build/` directory or connect your Git repo to services like:
 3. **Connect WebUI API:**
 Ensure the WebUI backend is deployed and accessible for chatbot query processing.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome community contributions to improve Xamsadine AI!  
 To get involved:
@@ -70,10 +70,10 @@ To get involved:
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the [MIT License](LICENSE).
 
-## 📬 Contact & Links
+## Contact & Links
 - **Email:** abdoullahaljersi@gmail.com  
 - **GitHub:** [@utachicodes](https://github.com/utachicodes)  
 - **Website:** [xamsadine.ai](https://xamsadine.ai)
