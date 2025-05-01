@@ -22,7 +22,7 @@ const topics = [
     description: 'His Life and Teachings',
     icon: Heart,
     gradient: 'from-islamic-gold to-yellow-500',
-    question: 'What are some important teachings of Prophet Muhammad?'
+    question: 'What are some important teachings of Prophet Muhammad (PBUH)?'
   },
   {
     title: 'Islamic History',
@@ -36,7 +36,7 @@ const topics = [
     description: 'Moral Values in Islam',
     icon: Compass,
     gradient: 'from-islamic-teal to-islamic-blue',
-    question: 'What are the core ethical values in Islam?'
+    question: 'What is "Adab" in Islam?'
   },
   {
     title: 'Islamic Practices',

@@ -24,11 +24,12 @@ const HeroSection = () => {
     
     setIsLoading(true);
     
-    // Simulate loading for the WebUI
+    const queryWithFatawa = question.includes('#Fatawa') ? question : `${question} #Fatawa`;
+    
     setTimeout(() => {
       setIsLoading(false);
       setShowWebUI(true);
-      // Simulate scrolling to the iframe
+      
       setTimeout(() => {
         const webUIContainer = document.getElementById('webui-container');
         webUIContainer?.scrollIntoView({ behavior: 'smooth' });
@@ -88,7 +89,7 @@ const HeroSection = () => {
           
           <div className="flex flex-wrap justify-center gap-2 text-sm text-white/70">
             <span>Popular:</span>
-            {['Prayer times', 'Fasting rules', 'Hajj guide', 'Islamic finance'].map((term) => (
+            {['Prayer of the traveller', 'What breaks my fast', 'Hajj guide', 'How does islam approach finance'].map((term) => (
               <button
                 key={term}
                 className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
@@ -109,7 +110,7 @@ const HeroSection = () => {
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
-              <div className="text-sm font-medium">XamSaDine Knowledge Base</div>
+              <div className="text-sm font-medium">Our Knowledge Base</div>
               <div></div>
             </div>
             <iframe 

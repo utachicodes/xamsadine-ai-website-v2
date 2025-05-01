@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
+        <nav className="hidden md:flex items-center justify-end flex-1">
           {navItems.map((item) => (
             <a
               key={item.title}
@@ -38,7 +37,7 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className="flex items-center">
+        <div className="flex items-center md:hidden">
           <Button
             variant="ghost"
             size="icon"
