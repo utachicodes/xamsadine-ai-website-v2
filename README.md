@@ -9,25 +9,25 @@
 
 ---
 
-## 🎯 Overview
+## Overview
 
 XamSaDine AI v2 is a complete **LLM Council Platform** that harnesses the power of four diverse language models through OpenRouter to provide comprehensive, multi-perspective analysis of complex questions. The system implements distributed consensus, peer review, and retrieval-augmented generation for knowledge-informed responses.
 
-### ✨ Key Features
+### Key Features
 
-- **🤖 4 Expert Council Members**: Diverse models (Claude, GPT-4o, Mistral, Llama) with specialized roles
-- **🔄 Distributed Consensus**: Independent analysis with peer review and agreement scoring
-- **📚 RAG Integration**: Semantic search and document management for contextual knowledge
-- **🎨 Beautiful UI**: Production-ready interface with real-time visualization
-- **🔌 Complete REST API**: Full-featured endpoints for council operations
-- **📈 Analytics**: Consensus scoring, performance metrics, and insight tracking
-- **🚀 Production Ready**: Docker support, deployment guides, and scaling documentation
-- **🎨 Modern UI**: Clean, responsive interface built with React + Tailwind CSS
-- **🔐 Epistemic Integrity**: No lateral communication between agents ensures methodological purity
+- **4 Expert Council Members**: Diverse models (Claude, GPT-4o, Mistral, Llama) with specialized roles
+- **Distributed Consensus**: Independent analysis with peer review and agreement scoring
+- **RAG Integration**: Semantic search and document management for contextual knowledge
+- **Beautiful UI**: Production-ready interface with real-time visualization
+- **Complete REST API**: Full-featured endpoints for council operations
+- **Analytics**: Consensus scoring, performance metrics, and insight tracking
+- **Production Ready**: Docker support, deployment guides, and scaling documentation
+- **Modern UI**: Clean, responsive interface built with React + Tailwind CSS
+- **Epistemic Integrity**: No lateral communication between agents ensures methodological purity
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 graph TD
@@ -87,7 +87,7 @@ Backend API Gateway will run on `http://localhost:4000`.
 
 ---
 
-## 📖 Usage
+## Usage
 
 ### 1. **Circle of Knowledge** (`/circle`)
 Submit queries and see multi-agent reasoning in action.
@@ -104,7 +104,7 @@ Submit queries and see multi-agent reasoning in action.
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### LLM Providers
 
@@ -142,7 +142,7 @@ When uploading documents, select the appropriate category:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 xamsadine-ai-website-v2/
@@ -173,7 +173,7 @@ xamsadine-ai-website-v2/
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Demo Mode (No API Keys)
 The system runs in demo mode with mock data when no API keys are configured. This allows exploration of the UI and architecture without LLM costs.
@@ -191,7 +191,7 @@ The system runs in demo mode with mock data when no API keys are configured. Thi
 
 ---
 
-## 🎓 Research Background
+## Research Background
 
 This system implements the architecture described in:
 
@@ -205,7 +205,7 @@ Key innovations:
 
 ---
 
-## 🛠️ Development
+## Development
 
 ### Adding a New Agent
 
@@ -232,22 +232,22 @@ The frontend uses:
 
 ---
 
-## 📝 License
+## License
 
 MIT License - see LICENSE file for details
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built with guidance from classical Islamic scholarship and modern AI research principles.
 
 ---
 
-## 📬 Contact
+## Contact
 
-For questions or collaboration: [your-email@domain.com]
+For questions or collaboration: abdoullahaljersi@gmail.com
 
 ---
 
-**Status**: 🚧 Beta - Core infrastructure complete, LLM/RAG integration in progress
+**Status**: Beta - Core infrastructure complete, LLM/RAG integration in progress
