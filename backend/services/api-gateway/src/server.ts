@@ -4,6 +4,7 @@ import { dirname, resolve } from "path";
 import { existsSync } from "node:fs";
 import express from "express";
 import cors from "cors";
+import { translationServiceManager } from "./translation-service-manager.js";
 
 // Get project root (4 levels up from this file)
 const __filename = fileURLToPath(import.meta.url);
@@ -400,10 +401,28 @@ app.get("/health", (_req, res) => {
 
 const port = process.env.PORT || 4000;
 
-app.listen(port, () => {
-  console.log(`✅ api-gateway listening on http://localhost:${port}`);
-  console.log(`✅ Test: http://localhost:${port}/health`);
+const server = app.listen(port, async () => {
+  try {
+    // Start translation service
+    await translationServiceManager.start();
+    
+    console.log(`✅ api-gateway listening on http://localhost:${port}`);
+    console.log(`✅ Test: http://localhost:${port}/health`);
+  } catch (error: any) {
+    console.error("⚠️  Warning: Translation service failed to start:", error.message);
+    console.log("   API Gateway will continue to run without translation service");
+  }
 }).on("error", (error: any) => {
   console.error("💥 FATAL: Could not start server:", error);
   process.exit(1);
+});
+
+// Handle graceful shutdown
+process.on("SIGINT", () => {
+  console.log("\n🛑 Shutting down...");
+  translationServiceManager.stop();
+  server.close(() => {
+    console.log("✅ Server closed");
+    process.exit(0);
+  });
 });
