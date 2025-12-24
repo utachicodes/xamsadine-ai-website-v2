@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { openRouterClient } from './openrouter-client';
 import { logger } from '../../shared/logger';
+import { createClient } from '@supabase/supabase-js';
 
 export interface Document {
     id: string;
@@ -40,14 +41,52 @@ const VECTOR_DB_PATH = path.join(process.cwd(), 'backend', 'data', 'vectors.json
 const DOCUMENTS_DB_PATH = path.join(process.cwd(), 'backend', 'data', 'documents.json');
 const DATA_DIR = path.join(process.cwd(), 'backend', 'data');
 
+const SUPABASE_VECTORS_TABLE = process.env.SUPABASE_RAG_VECTORS_TABLE || 'rag_vectors';
+const SUPABASE_DOCS_TABLE = process.env.SUPABASE_RAG_DOCS_TABLE || 'rag_ingested_documents';
+
+function getSupabaseAdmin() {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) return null;
+    return createClient(url, key, { auth: { persistSession: false } });
+}
+
 const CHUNK_SIZE = 500; // Characters per chunk
 const CHUNK_OVERLAP = 100; // Overlap between chunks
 
 export class VectorStore {
     private vectors: VectorEntry[] = [];
     private log = logger.prefixed('VectorStore');
+    private supabase = getSupabaseAdmin();
 
     async init() {
+        if (this.supabase) {
+            try {
+                const { data, error } = await this.supabase
+                    .from(SUPABASE_VECTORS_TABLE)
+                    .select('*');
+
+                if (error) throw error;
+
+                this.vectors = (data ?? []).map((row: any) => ({
+                    id: String(row.id),
+                    docId: String(row.doc_id),
+                    chunkIndex: Number(row.chunk_index),
+                    text: String(row.text),
+                    embedding: Array.isArray(row.embedding) ? row.embedding : [],
+                    metadata: {
+                        title: String(row.title ?? ''),
+                        source: String(row.source ?? ''),
+                        category: String(row.category ?? 'general'),
+                    },
+                }));
+                this.log.info(`Loaded ${this.vectors.length} vectors (Supabase)`);
+                return;
+            } catch {
+                // fall back to local
+            }
+        }
+
         try {
             await fs.mkdir(DATA_DIR, { recursive: true });
             const data = await fs.readFile(VECTOR_DB_PATH, 'utf-8');
@@ -65,6 +104,30 @@ export class VectorStore {
     }
 
     async save() {
+        if (this.supabase) {
+            try {
+                const rows = this.vectors.map((v) => ({
+                    id: v.id,
+                    doc_id: v.docId,
+                    chunk_index: v.chunkIndex,
+                    text: v.text,
+                    embedding: v.embedding,
+                    title: v.metadata.title,
+                    source: v.metadata.source,
+                    category: v.metadata.category,
+                }));
+
+                const { error } = await this.supabase
+                    .from(SUPABASE_VECTORS_TABLE)
+                    .upsert(rows, { onConflict: 'id' });
+
+                if (!error) return;
+            } catch {
+                // fall back to local
+            }
+        }
+
+        await fs.mkdir(DATA_DIR, { recursive: true });
         await fs.writeFile(VECTOR_DB_PATH, JSON.stringify(this.vectors, null, 2));
     }
 
@@ -96,6 +159,13 @@ export class VectorStore {
 
     async deleteForDoc(docId: string) {
         this.vectors = this.vectors.filter(v => v.docId !== docId);
+        if (this.supabase) {
+            try {
+                await this.supabase.from(SUPABASE_VECTORS_TABLE).delete().eq('doc_id', docId);
+            } catch {
+                // ignore; save() will fallback
+            }
+        }
         await this.save();
     }
 
@@ -107,8 +177,34 @@ export class VectorStore {
 export class DocumentManager {
     private documents: Map<string, Document> = new Map();
     private log = logger.prefixed('DocumentManager');
+    private supabase = getSupabaseAdmin();
 
     async init() {
+        if (this.supabase) {
+            try {
+                const { data, error } = await this.supabase
+                    .from(SUPABASE_DOCS_TABLE)
+                    .select('*');
+                if (error) throw error;
+
+                this.documents = new Map();
+                for (const row of data ?? []) {
+                    this.documents.set(String((row as any).id), {
+                        id: String((row as any).id),
+                        title: String((row as any).title ?? ''),
+                        content: String((row as any).content ?? ''),
+                        source: String((row as any).source ?? ''),
+                        category: String((row as any).category ?? 'general'),
+                        uploadedAt: String((row as any).uploaded_at ?? new Date().toISOString()),
+                    });
+                }
+                this.log.info(`Loaded ${this.documents.size} documents (Supabase)`);
+                return;
+            } catch {
+                // fall back to local
+            }
+        }
+
         try {
             const data = await fs.readFile(DOCUMENTS_DB_PATH, 'utf-8');
             const docs = JSON.parse(data) as Document[];
@@ -134,6 +230,24 @@ export class DocumentManager {
 
     async save() {
         const docs = Array.from(this.documents.values());
+
+        if (this.supabase) {
+            try {
+                const rows = docs.map((d) => ({
+                    id: d.id,
+                    title: d.title,
+                    content: d.content,
+                    source: d.source,
+                    category: d.category,
+                    uploaded_at: d.uploadedAt,
+                }));
+                const { error } = await this.supabase.from(SUPABASE_DOCS_TABLE).upsert(rows, { onConflict: 'id' });
+                if (!error) return;
+            } catch {
+                // fall back to local
+            }
+        }
+
         await fs.mkdir(DATA_DIR, { recursive: true });
         await fs.writeFile(DOCUMENTS_DB_PATH, JSON.stringify(docs, null, 2));
     }

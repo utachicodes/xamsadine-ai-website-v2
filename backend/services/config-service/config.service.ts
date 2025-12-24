@@ -1,8 +1,19 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { SystemConfig, AgentConfig, LLMConfig } from '../../shared/config-types';
+import { createClient } from '@supabase/supabase-js';
 
 const CONFIG_FILE = path.join(process.cwd(), 'backend', 'config.json');
+
+const SUPABASE_TABLE = process.env.SUPABASE_CONFIG_TABLE || 'system_config';
+const SUPABASE_CONFIG_ID = process.env.SUPABASE_CONFIG_ID || 'default';
+
+function getSupabaseAdmin() {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) return null;
+    return createClient(url, key, { auth: { persistSession: false } });
+}
 
 // Default configuration
 const DEFAULT_CONFIG: SystemConfig = {
@@ -46,13 +57,44 @@ const DEFAULT_CONFIG: SystemConfig = {
 
 export class ConfigService {
     private config: SystemConfig | null = null;
+    private supabase = getSupabaseAdmin();
 
     async loadConfig(): Promise<SystemConfig> {
+        if (this.supabase) {
+            try {
+                const { data, error } = await this.supabase
+                    .from(SUPABASE_TABLE)
+                    .select('config')
+                    .eq('id', SUPABASE_CONFIG_ID)
+                    .maybeSingle();
+
+                if (error) throw error;
+                if (data?.config) {
+                    this.config = data.config as SystemConfig;
+                    return this.config;
+                }
+
+                await this.saveConfig(DEFAULT_CONFIG);
+                this.config = DEFAULT_CONFIG;
+                return DEFAULT_CONFIG;
+            } catch {
+                try {
+                    const data = await fs.readFile(CONFIG_FILE, 'utf-8');
+                    this.config = JSON.parse(data);
+                    return this.config!;
+                } catch {
+                    await this.saveConfig(DEFAULT_CONFIG);
+                    this.config = DEFAULT_CONFIG;
+                    return DEFAULT_CONFIG;
+                }
+            }
+        }
+
         try {
             const data = await fs.readFile(CONFIG_FILE, 'utf-8');
             this.config = JSON.parse(data);
             return this.config!;
-        } catch (error) {
+        } catch {
             // If file doesn't exist, create default
             console.log('Config file not found, creating default...');
             await this.saveConfig(DEFAULT_CONFIG);
@@ -63,7 +105,21 @@ export class ConfigService {
 
     async saveConfig(config: SystemConfig): Promise<void> {
         config.lastUpdated = new Date().toISOString();
-        await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+
+        if (this.supabase) {
+            const row = {
+                id: SUPABASE_CONFIG_ID,
+                config,
+                updated_at: config.lastUpdated,
+            };
+            const { error } = await this.supabase.from(SUPABASE_TABLE).upsert(row, { onConflict: 'id' });
+            if (error) {
+                await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+            }
+        } else {
+            await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+        }
+
         this.config = config;
     }
 

@@ -74,21 +74,21 @@ export default {
 						800: '#1e40af',
 						900: '#1e3a8a',
 					},
-					// Luxurious amber/gold
+					// Luxurious gold
 					gold: {
-						DEFAULT: '#d97706', // amber-600
-						light: '#f59e0b', // amber-500
-						dark: '#92400e', // amber-900
-						50: '#fffbeb',
-						100: '#fef3c7',
-						200: '#fde68a',
-						300: '#fcd34d',
-						400: '#fbbf24',
-						500: '#f59e0b',
-						600: '#d97706',
-						700: '#b45309',
-						800: '#92400e',
-						900: '#78350f',
+						DEFAULT: '#c8a24a',
+						light: '#e0c36a',
+						dark: '#8c6a1f',
+						50: '#fbf7e6',
+						100: '#f5edc8',
+						200: '#eadc92',
+						300: '#dec55f',
+						400: '#d4b24b',
+						500: '#c8a24a',
+						600: '#b58b3c',
+						700: '#9a6f2f',
+						800: '#7a5425',
+						900: '#5f3f1c',
 					},
 					// Soft neutral cream
 					cream: {
@@ -271,8 +271,8 @@ export default {
 				'hero-gradient': 'linear-gradient(135deg, #047857 0%, #0d9488 50%, #1e40af 100%)',
 				'hero-gradient-alt': 'linear-gradient(to bottom right, rgba(4, 120, 87, 0.95), rgba(13, 148, 136, 0.9), rgba(30, 64, 175, 0.95))',
 				'card-gradient': 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
-				'gold-gradient': 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%)',
-				'mesh-gradient': 'radial-gradient(at 40% 20%, rgba(4, 120, 87, 0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(13, 148, 136, 0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(30, 64, 175, 0.3) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(217, 119, 6, 0.2) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(4, 120, 87, 0.2) 0px, transparent 50%)',
+				'gold-gradient': 'linear-gradient(90deg, #c8a24a 0%, #e0c36a 50%, #c8a24a 100%)',
+				'mesh-gradient': 'radial-gradient(at 40% 20%, rgba(4, 120, 87, 0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(13, 148, 136, 0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(30, 64, 175, 0.3) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(200, 162, 74, 0.22) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(4, 120, 87, 0.2) 0px, transparent 50%)',
 				'shimmer-gradient': 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)'
 			}
 		}

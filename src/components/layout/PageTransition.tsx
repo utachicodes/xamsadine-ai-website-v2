@@ -6,18 +6,16 @@ interface PageTransitionProps {
 }
 
 const variants = {
-  initial: { opacity: 0, y: 16, filter: "blur(6px)" },
+  initial: { opacity: 0, y: 10 },
   animate: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.45, ease: [0.23, 0.74, 0.12, 0.99] },
+    transition: { duration: 0.22, ease: "easeOut" },
   },
   exit: {
     opacity: 0,
-    y: -12,
-    filter: "blur(4px)",
-    transition: { duration: 0.3, ease: "easeOut" },
+    y: -8,
+    transition: { duration: 0.16, ease: "easeOut" },
   },
 };
 

@@ -2,9 +2,11 @@ import React from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/auth/AuthContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { user, isAdmin, signOut } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -13,8 +15,12 @@ const Navbar = () => {
     { title: 'Daily Islam', href: '/dashboard' },
     { title: 'Guided Fatwa', href: '/fatwa' },
     { title: 'Circle of Knowledge', href: '/circle' },
-    { title: 'Admin Config', href: '/admin' },
-    { title: 'Documents', href: '/documents' },
+    ...(isAdmin
+      ? [
+          { title: 'Admin Config', href: '/admin' },
+          { title: 'Documents', href: '/documents' },
+        ]
+      : []),
     { title: 'Fiqh', href: '/fiqh' },
     { title: 'Settings', href: '/language' },
   ];
@@ -54,6 +60,26 @@ const Navbar = () => {
               {item.title}
             </Link>
           ))}
+
+          {!user ? (
+            <Link
+              to="/login"
+              className="block py-2 text-sm text-islamic-dark hover:text-islamic-green transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Sign in
+            </Link>
+          ) : (
+            <button
+              className="block w-full text-left py-2 text-sm text-islamic-dark hover:text-islamic-green transition-colors"
+              onClick={async () => {
+                await signOut();
+                setIsMenuOpen(false);
+              }}
+            >
+              Sign out
+            </button>
+          )}
         </div>
       )}
     </header>

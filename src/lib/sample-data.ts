@@ -264,7 +264,7 @@ export const SAMPLE_QUERIES = [
  * Initialize sample data in the system
  * This function would be called during setup to populate the knowledge base
  */
-export async function initializeSampleData(apiUrl: string = 'http://localhost:4000/api/council'): Promise<void> {
+export async function initializeSampleData(apiUrl: string = '/api/council'): Promise<void> {
     console.log('🚀 Initializing sample data...');
 
     // Upload all sample documents
@@ -300,7 +300,7 @@ export async function initializeSampleData(apiUrl: string = 'http://localhost:40
 /**
  * Clear sample data
  */
-export async function clearSampleData(apiUrl: string = 'http://localhost:4000/api/council'): Promise<void> {
+export async function clearSampleData(apiUrl: string = '/api/council'): Promise<void> {
     console.log('🗑️  Clearing sample data...');
 
     for (const doc of SAMPLE_DOCUMENTS) {

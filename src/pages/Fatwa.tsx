@@ -1,13 +1,14 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Fatwa: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   React.useEffect(() => {
     // Automatically redirect to Circle of Knowledge
-    navigate('/circle');
-  }, [navigate]);
+    navigate(`/circle${location.search || ''}`);
+  }, [navigate, location.search]);
 
   return (
     <div className="flex-1 min-h-screen flex items-center justify-center bg-gradient-to-br from-islamic-cream/30 via-white to-islamic-gold/10">

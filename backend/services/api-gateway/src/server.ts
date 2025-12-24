@@ -2,9 +2,13 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
 import { existsSync } from "node:fs";
+import path from "node:path";
 import express from "express";
 import cors from "cors";
 import { translationServiceManager } from "./translation-service-manager.js";
+import { requireAdmin, requireAuth } from "./auth";
+import { configService } from "../../config-service/config.service";
+import { documentManager } from "../../rag-service/document-manager";
 
 // Get project root (4 levels up from this file)
 const __filename = fileURLToPath(import.meta.url);
@@ -51,25 +55,31 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve frontend build (Vite dist/) from the project root
+const distPath = path.join(projectRoot, "dist");
+if (existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
+
 // Initialize services
-import('../services/config-service/config.service.js').then(({ configService }) => {
-  configService.loadConfig().then(() => {
-    console.log('✅ Config service initialized');
-  }).catch(err => {
-    console.error('⚠️  Config service error:', err.message);
-  });
+configService.loadConfig().then(() => {
+  console.log('✅ Config service initialized');
+}).catch((err: any) => {
+  console.error('⚠️  Config service error:', err.message);
 });
 
-import('../services/rag-service/document-manager.js').then(({ documentManager }) => {
-  documentManager.init().then(() => {
-    console.log('✅ Document manager initialized');
-  }).catch(err => {
-    console.error('⚠️  Document manager error:', err.message);
-  });
+documentManager.init().then(() => {
+  console.log('✅ Document manager initialized');
+}).catch((err: any) => {
+  console.error('⚠️  Document manager error:', err.message);
 });
 
 // Simple test endpoint
 app.get("/", (_req, res) => {
+  if (existsSync(distPath)) {
+    res.sendFile(path.join(distPath, "index.html"));
+    return;
+  }
   res.json({ message: "XamSaDine API Gateway is running!", status: "ok" });
 });
 
@@ -164,72 +174,17 @@ app.get("/api/council/members", async (req, res) => {
   }
 });
 
-app.get("/api/council/health", async (req, res) => {
+app.get("/api/council/health", async (_req, res) => {
   try {
-    const { healthCheck } = await import("./routes/council-handler.ts");
-    healthCheck(req, res);
+    res.json({
+      success: true,
+      data: {
+        status: "healthy",
+        timestamp: new Date().toISOString(),
+      },
+    });
   } catch (error: any) {
     console.error("💥 Unhandled error in /api/council/health route:", error);
-    if (!res.headersSent) {
-      res.status(500).json({
-        error: "Internal server error",
-        message: "An unexpected error occurred",
-      });
-    }
-  }
-});
-
-app.post("/api/council/documents", async (req, res) => {
-  try {
-    const { uploadDocument } = await import("./routes/council-handler.ts");
-    await uploadDocument(req, res);
-  } catch (error: any) {
-    console.error("💥 Unhandled error in /api/council/documents POST route:", error);
-    if (!res.headersSent) {
-      res.status(500).json({
-        error: "Internal server error",
-        message: "An unexpected error occurred",
-      });
-    }
-  }
-});
-
-app.get("/api/council/documents", async (req, res) => {
-  try {
-    const { listDocuments } = await import("./routes/council-handler.ts");
-    listDocuments(req, res);
-  } catch (error: any) {
-    console.error("💥 Unhandled error in /api/council/documents GET route:", error);
-    if (!res.headersSent) {
-      res.status(500).json({
-        error: "Internal server error",
-        message: "An unexpected error occurred",
-      });
-    }
-  }
-});
-
-app.get("/api/council/documents/:docId", async (req, res) => {
-  try {
-    const { getDocument } = await import("./routes/council-handler.ts");
-    getDocument(req, res);
-  } catch (error: any) {
-    console.error("💥 Unhandled error in /api/council/documents/:docId GET route:", error);
-    if (!res.headersSent) {
-      res.status(500).json({
-        error: "Internal server error",
-        message: "An unexpected error occurred",
-      });
-    }
-  }
-});
-
-app.delete("/api/council/documents/:docId", async (req, res) => {
-  try {
-    const { deleteDocument } = await import("./routes/council-handler.ts");
-    await deleteDocument(req, res);
-  } catch (error: any) {
-    console.error("💥 Unhandled error in /api/council/documents/:docId DELETE route:", error);
     if (!res.headersSent) {
       res.status(500).json({
         error: "Internal server error",
@@ -255,7 +210,7 @@ app.post("/api/council/search", async (req, res) => {
 });
 
 // Config routes
-app.get("/api/config/agents", async (req, res) => {
+app.get("/api/config/agents", requireAdmin, async (req, res) => {
   try {
     const { getAgents } = await import("./routes/config.ts");
     await getAgents(req, res);
@@ -267,7 +222,7 @@ app.get("/api/config/agents", async (req, res) => {
   }
 });
 
-app.post("/api/config/agents/:agentId", async (req, res) => {
+app.post("/api/config/agents/:agentId", requireAdmin, async (req, res) => {
   try {
     const { updateAgent } = await import("./routes/config.ts");
     await updateAgent(req, res);
@@ -279,7 +234,7 @@ app.post("/api/config/agents/:agentId", async (req, res) => {
   }
 });
 
-app.get("/api/config/models", async (req, res) => {
+app.get("/api/config/models", requireAdmin, async (req, res) => {
   try {
     const { getModels } = await import("./routes/config.ts");
     await getModels(req, res);
@@ -292,7 +247,7 @@ app.get("/api/config/models", async (req, res) => {
 });
 
 // Document routes
-app.post("/api/documents/upload", async (req, res) => {
+app.post("/api/documents/upload", requireAdmin, async (req, res) => {
   try {
     const { uploadMiddleware, uploadDocument } = await import("./routes/documents.ts");
     uploadMiddleware(req, res, async (err: any) => {
@@ -310,7 +265,7 @@ app.post("/api/documents/upload", async (req, res) => {
   }
 });
 
-app.get("/api/documents", async (req, res) => {
+app.get("/api/documents", requireAdmin, async (req, res) => {
   try {
     const { listDocuments } = await import("./routes/documents.ts");
     await listDocuments(req, res);
@@ -322,12 +277,24 @@ app.get("/api/documents", async (req, res) => {
   }
 });
 
-app.delete("/api/documents/:id", async (req, res) => {
+app.delete("/api/documents/:id", requireAdmin, async (req, res) => {
   try {
     const { deleteDocument } = await import("./routes/documents.ts");
     await deleteDocument(req, res);
   } catch (error: any) {
     console.error("💥 Error in /api/documents/:id:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error", message: error.message });
+    }
+  }
+});
+
+app.get("/api/documents/:id/url", requireAdmin, async (req, res) => {
+  try {
+    const { getDocumentSignedUrl } = await import("./routes/documents.ts");
+    await getDocumentSignedUrl(req, res);
+  } catch (error: any) {
+    console.error("💥 Error in /api/documents/:id/url:", error);
     if (!res.headersSent) {
       res.status(500).json({ error: "Internal server error", message: error.message });
     }
@@ -393,6 +360,18 @@ app.post("/api/council/detect-language", async (req, res) => {
       });
     }
   }
+});
+
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api")) {
+    res.status(404).json({ error: "Not Found" });
+    return;
+  }
+  if (existsSync(distPath)) {
+    res.sendFile(path.join(distPath, "index.html"));
+    return;
+  }
+  res.status(404).json({ error: "Not Found" });
 });
 
 app.get("/health", (_req, res) => {

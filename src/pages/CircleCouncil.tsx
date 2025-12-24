@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { useLocation } from 'react-router-dom';
 import {
     Users,
     Brain,
@@ -28,11 +29,32 @@ import {
 
 const CirclePage: React.FC = () => {
     const { toast } = useToast();
+    const location = useLocation();
     const council = useCouncil();
     const [activeResult, setActiveResult] = React.useState<ConsensusResult | null>(null);
     const [showDocumentForm, setShowDocumentForm] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [searchResults, setSearchResults] = React.useState<any>(null);
+
+    const askNowQuery = React.useMemo(() => {
+        const params = new URLSearchParams(location.search);
+        const q = params.get('q');
+        return q ? q.trim() : '';
+    }, [location.search]);
+
+    const autoSubmitKey = React.useMemo(() => {
+        return askNowQuery ? `asknow:${askNowQuery}` : '';
+    }, [askNowQuery]);
+
+    const hasAutoSubmittedRef = React.useRef(false);
+
+    React.useEffect(() => {
+        if (!askNowQuery) return;
+        if (hasAutoSubmittedRef.current) return;
+        hasAutoSubmittedRef.current = true;
+        handleAskCouncil(askNowQuery);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [askNowQuery]);
 
     const handleAskCouncil = async (query: string) => {
         try {
@@ -173,6 +195,8 @@ const CirclePage: React.FC = () => {
                                         <CouncilQueryForm
                                             onSubmit={handleAskCouncil}
                                             isLoading={council.askLoading || council.isProcessing}
+                                            initialQuery={askNowQuery || undefined}
+                                            autoSubmitKey={autoSubmitKey || undefined}
                                         />
                                     </CardContent>
                                 </Card>

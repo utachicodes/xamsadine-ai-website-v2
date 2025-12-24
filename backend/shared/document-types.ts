@@ -6,6 +6,8 @@ export interface DocumentMetadata {
     processedAt?: string;
     status: 'uploaded' | 'processing' | 'ready' | 'error';
     chunkCount?: number;
+    storageBucket?: string;
+    storagePath?: string;
 }
 
 export interface DocumentChunk {

@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/auth/AuthContext";
+import { AdminRoute, ProtectedRoute } from "@/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
@@ -12,6 +14,7 @@ import Language from "./pages/Language";
 import Circle from "./pages/Circle";
 import AdminConfig from "./pages/AdminConfig";
 import DocumentUpload from "./pages/DocumentUpload";
+import Login from "./pages/Login";
 import AppShell from "./components/layout/AppShell";
 
 const queryClient = new QueryClient();
@@ -21,22 +24,46 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AppShell>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/fatwa" element={<Fatwa />} />
-            <Route path="/fiqh" element={<Fiqh />} />
-            <Route path="/language" element={<Language />} />
-            <Route path="/circle" element={<Circle />} />
-            <Route path="/admin" element={<AdminConfig />} />
-            <Route path="/documents" element={<DocumentUpload />} />
-            {/* Catch-all */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AppShell>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppShell>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/fatwa" element={<Fatwa />} />
+              <Route path="/fiqh" element={<Fiqh />} />
+              <Route path="/language" element={<Language />} />
+              <Route
+                path="/circle"
+                element={
+                  <ProtectedRoute>
+                    <Circle />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminConfig />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/documents"
+                element={
+                  <AdminRoute>
+                    <DocumentUpload />
+                  </AdminRoute>
+                }
+              />
+              {/* Catch-all */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AppShell>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

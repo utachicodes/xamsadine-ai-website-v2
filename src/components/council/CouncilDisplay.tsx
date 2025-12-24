@@ -144,10 +144,27 @@ export const MemberResponseDisplay: React.FC<MemberResponseDisplayProps> = ({
 interface CouncilQueryFormProps {
     onSubmit: (query: string) => void;
     isLoading: boolean;
+    initialQuery?: string;
+    autoSubmitKey?: string;
 }
 
-export const CouncilQueryForm: React.FC<CouncilQueryFormProps> = ({ onSubmit, isLoading }) => {
+export const CouncilQueryForm: React.FC<CouncilQueryFormProps> = ({ onSubmit, isLoading, initialQuery, autoSubmitKey }) => {
     const [query, setQuery] = React.useState('');
+
+    React.useEffect(() => {
+        if (typeof initialQuery === 'string' && initialQuery.trim() && !query.trim()) {
+            setQuery(initialQuery);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialQuery]);
+
+    React.useEffect(() => {
+        if (autoSubmitKey && typeof initialQuery === 'string' && initialQuery.trim()) {
+            onSubmit(initialQuery);
+            setQuery('');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoSubmitKey]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

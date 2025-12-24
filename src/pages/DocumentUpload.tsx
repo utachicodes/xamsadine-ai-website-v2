@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Upload, FileText, Trash2, CheckCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api";
 
 interface DocumentMetadata {
     id: string;
@@ -25,6 +26,7 @@ const CATEGORIES = [
 const DocumentUpload: React.FC = () => {
     const [documents, setDocuments] = React.useState<DocumentMetadata[]>([]);
     const [uploading, setUploading] = React.useState(false);
+    const [openingId, setOpeningId] = React.useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = React.useState(CATEGORIES[0].value);
     const [dragActive, setDragActive] = React.useState(false);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -36,13 +38,36 @@ const DocumentUpload: React.FC = () => {
 
     const loadDocuments = async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/documents');
+            const response = await apiFetch('/api/documents');
             if (response.ok) {
                 const { documents } = await response.json();
                 setDocuments(documents || []);
             }
         } catch (error) {
             console.error('Error loading documents:', error);
+        }
+    };
+
+    const handleOpen = async (id: string) => {
+        setOpeningId(id);
+        try {
+            const response = await apiFetch(`/api/documents/${id}/url`);
+            if (!response.ok) {
+                throw new Error('Could not create signed URL');
+            }
+            const { url } = await response.json();
+            if (!url) {
+                throw new Error('Missing signed URL');
+            }
+            window.open(url, '_blank', 'noopener,noreferrer');
+        } catch (error) {
+            toast({
+                title: 'Open Failed',
+                description: 'Could not open document. Make sure SUPABASE_SERVICE_ROLE_KEY is set and the file exists in Storage.',
+                variant: 'destructive'
+            });
+        } finally {
+            setOpeningId(null);
         }
     };
 
@@ -88,7 +113,7 @@ const DocumentUpload: React.FC = () => {
             formData.append('file', file);
             formData.append('category', selectedCategory);
 
-            const response = await fetch('http://localhost:4000/api/documents/upload', {
+            const response = await apiFetch('/api/documents/upload', {
                 method: 'POST',
                 body: formData
             });
@@ -116,7 +141,7 @@ const DocumentUpload: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/documents/${id}`, {
+            const response = await apiFetch(`/api/documents/${id}`, {
                 method: 'DELETE'
             });
 
@@ -246,13 +271,24 @@ const DocumentUpload: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={() => handleDelete(doc.id)}
-                                            className="p-2 text-islamic-dark/40 hover:text-red-500 rounded-lg transition-colors"
-                                            title="Delete document"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => handleOpen(doc.id)}
+                                                disabled={openingId === doc.id}
+                                                className="px-3 py-2 text-xs rounded-lg border border-islamic-cream text-islamic-dark/80 hover:text-islamic-dark hover:border-islamic-gold/50 transition-colors disabled:opacity-50"
+                                                title="Preview / Download"
+                                            >
+                                                {openingId === doc.id ? 'Opening...' : 'Open'}
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleDelete(doc.id)}
+                                                className="p-2 text-islamic-dark/40 hover:text-red-500 rounded-lg transition-colors"
+                                                title="Delete document"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

@@ -63,8 +63,8 @@
   .islamic-card {
     @apply relative overflow-hidden rounded-2xl transition-all duration-300;
     background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px 0 rgba(4, 120, 87, 0.08), 
                 0 2px 8px 0 rgba(0, 0, 0, 0.04);
@@ -73,7 +73,7 @@
   .islamic-card:hover {
     box-shadow: 0 12px 48px 0 rgba(4, 120, 87, 0.12), 
                 0 4px 16px 0 rgba(0, 0, 0, 0.06);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
   
   /* Premium Glassmorphic Card - Dark variant */
@@ -134,8 +134,8 @@
   .search-input {
     @apply w-full rounded-full py-4 px-6 text-base;
     background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border: 2px solid rgba(16, 185, 129, 0.2);
     box-shadow: 0 4px 24px rgba(4, 120, 87, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -165,7 +165,7 @@
   }
   
   .btn-islamic:hover {
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-1px);
     box-shadow: 0 15px 35px rgba(4, 120, 87, 0.35), 
                 0 6px 16px rgba(0, 0, 0, 0.12);
   }
@@ -175,7 +175,7 @@
   }
   
   .btn-islamic:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0);
   }
   
   /* Premium Button - Outlined */

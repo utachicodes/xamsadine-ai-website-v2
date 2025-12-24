@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Settings, Save, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api";
 
 interface AgentConfig {
     agentId: string;
@@ -36,8 +37,8 @@ const AdminConfig: React.FC = () => {
         setLoading(true);
         try {
             const [agentsRes, modelsRes] = await Promise.all([
-                fetch('http://localhost:4000/api/config/agents'),
-                fetch('http://localhost:4000/api/config/models')
+                apiFetch('/api/config/agents'),
+                apiFetch('/api/config/models')
             ]);
 
             if (agentsRes.ok && modelsRes.ok) {
@@ -60,9 +61,8 @@ const AdminConfig: React.FC = () => {
     const updateAgent = async (agentId: string, updates: Partial<AgentConfig>) => {
         setSaving(true);
         try {
-            const response = await fetch(`http://localhost:4000/api/config/agents/${agentId}`, {
+            const response = await apiFetch(`/api/config/agents/${agentId}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates)
             });
 

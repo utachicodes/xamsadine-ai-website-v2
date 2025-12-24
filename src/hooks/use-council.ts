@@ -1,7 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-const API_BASE = 'http://localhost:4000/api/council';
+import { apiFetch } from '@/lib/api';
+
+const API_BASE = '/api/council';
 
 export interface CouncilMember {
     id: string;
@@ -52,7 +54,7 @@ export function useCouncil() {
     const membersQuery = useQuery({
         queryKey: ['councilMembers'],
         queryFn: async () => {
-            const response = await fetch(`${API_BASE}/members`);
+            const response = await apiFetch(`${API_BASE}/members`);
             if (!response.ok) throw new Error('Failed to fetch members');
             const data = await response.json();
             return data.data as CouncilMember[];
@@ -64,9 +66,8 @@ export function useCouncil() {
         mutationFn: async ({ query, useRAG = true }: { query: string; useRAG?: boolean }) => {
             setIsProcessing(true);
             try {
-                const response = await fetch(`${API_BASE}/ask`, {
+                const response = await apiFetch(`${API_BASE}/ask`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query, useRAG })
                 });
                 if (!response.ok) throw new Error('Failed to ask council');
@@ -90,9 +91,8 @@ export function useCouncil() {
             source: string;
             category?: string;
         }) => {
-            const response = await fetch(`${API_BASE}/documents`, {
+            const response = await apiFetch(`${API_BASE}/documents`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(doc)
             });
             if (!response.ok) throw new Error('Failed to upload document');
@@ -107,7 +107,7 @@ export function useCouncil() {
     const documentsQuery = useQuery({
         queryKey: ['documents'],
         queryFn: async () => {
-            const response = await fetch(`${API_BASE}/documents`);
+            const response = await apiFetch(`${API_BASE}/documents`);
             if (!response.ok) throw new Error('Failed to fetch documents');
             const data = await response.json();
             return data.data as Document[];
@@ -117,7 +117,7 @@ export function useCouncil() {
     // Delete document
     const deleteMutation = useMutation({
         mutationFn: async (docId: string) => {
-            const response = await fetch(`${API_BASE}/documents/${docId}`, {
+            const response = await apiFetch(`${API_BASE}/documents/${docId}`, {
                 method: 'DELETE'
             });
             if (!response.ok) throw new Error('Failed to delete document');
@@ -131,9 +131,8 @@ export function useCouncil() {
     // Search RAG
     const searchMutation = useMutation({
         mutationFn: async ({ query, topK = 5 }: { query: string; topK?: number }) => {
-            const response = await fetch(`${API_BASE}/search`, {
+            const response = await apiFetch(`${API_BASE}/search`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query, topK })
             });
             if (!response.ok) throw new Error('Failed to search RAG');
@@ -146,7 +145,7 @@ export function useCouncil() {
     const healthQuery = useQuery({
         queryKey: ['councilHealth'],
         queryFn: async () => {
-            const response = await fetch(`${API_BASE}/health`);
+            const response = await apiFetch(`${API_BASE}/health`);
             if (!response.ok) throw new Error('Council health check failed');
             return await response.json();
         },

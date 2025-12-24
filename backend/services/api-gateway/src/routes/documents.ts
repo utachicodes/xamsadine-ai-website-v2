@@ -53,3 +53,14 @@ export async function deleteDocument(req: Request, res: Response) {
         res.status(500).json({ error: error.message });
     }
 }
+
+export async function getDocumentSignedUrl(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const url = await documentManager.getSignedUrl(id);
+        res.json({ url });
+    } catch (error: any) {
+        console.error('[DocumentRoute] SignedUrl error:', error);
+        res.status(500).json({ error: error.message });
+    }
+}

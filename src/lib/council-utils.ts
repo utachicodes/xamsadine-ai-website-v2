@@ -95,7 +95,7 @@ export function sanitizeQuery(query: string): string {
  */
 export async function checkCouncilHealth(): Promise<boolean> {
     try {
-        const response = await fetch('http://localhost:4000/api/council/health');
+        const response = await fetch('/api/council/health');
         return response.ok;
     } catch {
         return false;

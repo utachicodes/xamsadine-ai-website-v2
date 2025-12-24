@@ -25,11 +25,11 @@ const GeometricBackground: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{
             opacity: 1,
-            scale: [0.98, 1.03, 0.98],
-            y: [0, -10, 0],
+            scale: [0.99, 1.01, 0.99],
+            y: [0, -4, 0],
           }}
           transition={{
-            duration: 24,
+            duration: 36,
             repeat: Infinity,
             ease: "easeInOut",
             delay: index * 2.5,
