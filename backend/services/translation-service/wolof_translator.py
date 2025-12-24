@@ -38,6 +38,9 @@ class FrenchWolofTranslator:
         """
         text_lower = text.lower()
         
+        # Common French words
+        french_indicators = ['le', 'la', 'de', 'et', 'est', 'un', 'une', 'je', 'tu', 'il', 'elle']
+        
         # Common Wolof words
         wolof_indicators = ['naka', 'def', 'ak', 'jaam', 'bu', 'li', 'ñu', 'ko', 'am', 'ba']
         

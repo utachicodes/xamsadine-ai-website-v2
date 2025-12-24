@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+// Built-in fetch in Node.js 18+
+// No need to import from 'node-fetch'
 
 export interface OpenRouterRequest {
     model: string;
@@ -80,7 +81,7 @@ export class OpenRouterClient {
         this.title = title;
 
         if (!this.apiKey) {
-            console.warn('⚠️ OPENROUTER_API_KEY not configured. OpenRouter calls will fail.');
+            console.warn('OPENROUTER_API_KEY not configured. OpenRouter calls will fail.');
         }
     }
 
