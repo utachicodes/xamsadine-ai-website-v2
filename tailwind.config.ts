@@ -26,13 +26,87 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				islamic: {
-					green: '#105e36',
-					teal: '#00827f',
-					blue: '#0d3f67',
-					gold: '#c19a30',
-					cream: '#f8f0e0',
-					dark: '#0d1f2d',
-					light: '#f9fafc'
+					// Rich, sophisticated emerald greens
+					green: {
+						DEFAULT: '#047857', // emerald-700
+						light: '#10b981', // emerald-500
+						dark: '#064e3b', // emerald-900
+						50: '#ecfdf5',
+						100: '#d1fae5',
+						200: '#a7f3d0',
+						300: '#6ee7b7',
+						400: '#34d399',
+						500: '#10b981',
+						600: '#059669',
+						700: '#047857',
+						800: '#065f46',
+						900: '#064e3b',
+					},
+					// Vibrant teal accents
+					teal: {
+						DEFAULT: '#0d9488', // teal-600
+						light: '#14b8a6', // teal-500
+						dark: '#115e59', // teal-800
+						50: '#f0fdfa',
+						100: '#ccfbf1',
+						200: '#99f6e4',
+						300: '#5eead4',
+						400: '#2dd4bf',
+						500: '#14b8a6',
+						600: '#0d9488',
+						700: '#0f766e',
+						800: '#115e59',
+						900: '#134e4a',
+					},
+					// Deep, elegant blue
+					blue: {
+						DEFAULT: '#1e40af', // blue-800
+						light: '#3b82f6', // blue-500
+						dark: '#1e3a8a', // blue-900
+						50: '#eff6ff',
+						100: '#dbeafe',
+						200: '#bfdbfe',
+						300: '#93c5fd',
+						400: '#60a5fa',
+						500: '#3b82f6',
+						600: '#2563eb',
+						700: '#1d4ed8',
+						800: '#1e40af',
+						900: '#1e3a8a',
+					},
+					// Luxurious amber/gold
+					gold: {
+						DEFAULT: '#d97706', // amber-600
+						light: '#f59e0b', // amber-500
+						dark: '#92400e', // amber-900
+						50: '#fffbeb',
+						100: '#fef3c7',
+						200: '#fde68a',
+						300: '#fcd34d',
+						400: '#fbbf24',
+						500: '#f59e0b',
+						600: '#d97706',
+						700: '#b45309',
+						800: '#92400e',
+						900: '#78350f',
+					},
+					// Soft neutral cream
+					cream: {
+						DEFAULT: '#fef3c7',
+						light: '#fffbeb',
+						dark: '#fde68a',
+					},
+					// Deep, rich dark
+					dark: {
+						DEFAULT: '#0f172a', // slate-900
+						light: '#1e293b', // slate-800
+						lighter: '#334155', // slate-700
+					},
+					// Clean, bright light
+					light: {
+						DEFAULT: '#f8fafc', // slate-50
+						dark: '#f1f5f9', // slate-100
+					}
 				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
@@ -100,7 +174,15 @@ export default {
 						transform: 'translateY(0)'
 					},
 					'50%': {
-						transform: 'translateY(-10px)'
+						transform: 'translateY(-20px)'
+					}
+				},
+				'float-slow': {
+					'0%, 100%': {
+						transform: 'translateY(0) translateX(0)'
+					},
+					'50%': {
+						transform: 'translateY(-15px) translateX(10px)'
 					}
 				},
 				'pulse-slow': {
@@ -108,7 +190,17 @@ export default {
 						opacity: '1'
 					},
 					'50%': {
-						opacity: '0.8'
+						opacity: '0.7'
+					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						opacity: '0.5',
+						transform: 'scale(1)'
+					},
+					'50%': {
+						opacity: '0.8',
+						transform: 'scale(1.05)'
 					}
 				},
 				'rotate-slow': {
@@ -127,26 +219,62 @@ export default {
 						backgroundPosition: '500px 0'
 					}
 				},
-        'pattern-rotate': {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' }
-        }
+				'gradient-shift': {
+					'0%, 100%': {
+						backgroundPosition: '0% 50%'
+					},
+					'50%': {
+						backgroundPosition: '100% 50%'
+					}
+				},
+				'fade-in-up': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'scale(0.9)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
+				},
+				'pattern-rotate': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'float': 'float 6s ease-in-out infinite',
+				'float-slow': 'float-slow 8s ease-in-out infinite',
 				'pulse-slow': 'pulse-slow 4s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
 				'rotate-slow': 'rotate-slow 20s linear infinite',
 				'shimmer': 'shimmer 3s infinite linear',
-        'pattern-rotate': 'pattern-rotate 40s linear infinite'
+				'gradient-shift': 'gradient-shift 8s ease infinite',
+				'fade-in-up': 'fade-in-up 0.6s ease-out',
+				'scale-in': 'scale-in 0.4s ease-out',
+				'pattern-rotate': 'pattern-rotate 40s linear infinite'
 			},
-      backgroundImage: {
-        'islamic-pattern': "url('/pattern.svg')",
-        'hero-gradient': 'linear-gradient(to right, rgba(16, 94, 54, 0.9), rgba(13, 63, 103, 0.9))',
-        'card-gradient': 'linear-gradient(225deg, #105e36 0%, #0d3f67 100%)',
-        'gold-gradient': 'linear-gradient(90deg, #c19a30 0%, #ddb957 50%, #c19a30 100%)'
-      }
+			backgroundImage: {
+				'islamic-pattern': "url('/pattern.svg')",
+				'hero-gradient': 'linear-gradient(135deg, #047857 0%, #0d9488 50%, #1e40af 100%)',
+				'hero-gradient-alt': 'linear-gradient(to bottom right, rgba(4, 120, 87, 0.95), rgba(13, 148, 136, 0.9), rgba(30, 64, 175, 0.95))',
+				'card-gradient': 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+				'gold-gradient': 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%)',
+				'mesh-gradient': 'radial-gradient(at 40% 20%, rgba(4, 120, 87, 0.3) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(13, 148, 136, 0.3) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(30, 64, 175, 0.3) 0px, transparent 50%), radial-gradient(at 80% 50%, rgba(217, 119, 6, 0.2) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(4, 120, 87, 0.2) 0px, transparent 50%)',
+				'shimmer-gradient': 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)'
+			}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

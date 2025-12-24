@@ -1,18 +1,22 @@
 import React from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-  const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  
+
   const navItems = [
     { title: 'Home', href: '/' },
-    { title: 'Topics', href: '#topics' },
-    { title: 'About', href: '#about' }
+    { title: 'Daily Islam', href: '/dashboard' },
+    { title: 'Guided Fatwa', href: '/fatwa' },
+    { title: 'Circle of Knowledge', href: '/circle' },
+    { title: 'Admin Config', href: '/admin' },
+    { title: 'Documents', href: '/documents' },
+    { title: 'Fiqh', href: '/fiqh' },
+    { title: 'Settings', href: '/language' },
   ];
 
   return (
@@ -24,24 +28,12 @@ const Navbar = () => {
           </span>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center justify-end flex-1">
-          {navItems.map((item) => (
-            <a
-              key={item.title}
-              href={item.href}
-              className="px-4 py-2 rounded-md text-islamic-dark hover:bg-islamic-cream transition-colors"
-            >
-              {item.title}
-            </a>
-          ))}
-        </nav>
-
-        <div className="flex items-center md:hidden">
+        {/* Menu button (all breakpoints) */}
+        <div className="flex items-center">
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full md:hidden"
+            className="rounded-full"
             onClick={toggleMenu}
           >
             <Menu className="h-5 w-5" />
@@ -49,18 +41,18 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMobile && isMenuOpen && (
-        <div className="absolute top-16 inset-x-0 bg-white shadow-md z-50 py-4 px-6 space-y-4 md:hidden">
+      {/* Menu (opens under header on all breakpoints) */}
+      {isMenuOpen && (
+        <div className="absolute top-16 inset-x-4 md:inset-x-auto md:right-6 md:w-60 bg-white/95 shadow-xl rounded-2xl border border-islamic-cream z-50 py-4 px-6 space-y-2 transform origin-top transition-all duration-200 ease-out">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.title}
-              href={item.href}
-              className="block py-2 text-islamic-dark hover:text-islamic-green transition-colors"
+              to={item.href}
+              className="block py-2 text-sm text-islamic-dark hover:text-islamic-green transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               {item.title}
-            </a>
+            </Link>
           ))}
         </div>
       )}

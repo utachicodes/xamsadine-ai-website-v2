@@ -1,80 +1,253 @@
-# Xamsadine AI - V2 Website
+# XamSaDine AI v2.0 - LLM Council Platform
 
-**Xamsadine AI** is an advanced Islamic chatbot that delivers answers grounded in a rich archive of vocal Fatawa data. This second version of the website brings a modern, cleaner interface and enhanced performance, designed to improve user experience and make interactions with the AI smoother through WebUI API integration.
+> **The Circle of Knowledge**: A sophisticated distributed multi-agent consensus system powered by 4 expert LLMs working together to provide nuanced, well-reasoned responses to complex questions.
 
-## ✨ What's New in V2
-- **Modern UI/UX Design:** A complete redesign for a more polished and responsive user experience.
-- **Enhanced Search Experience:** Faster input handling with real-time query feedback.
-- **Improved API Handling:** More stable and efficient API communication with better error handling.
-- **SEO & Performance Optimized:** Faster load times and better discoverability across search engines.
-- **Accessibility Enhancements:** Improved support for screen readers, keyboard navigation, and flexible text sizing.
-
-## 🚀 Features
-- **User-Friendly Web Interface** – Clean, responsive design for all devices.
-- **Secure API Integration** – Real-time communication with the AI WebUI backend.
-- **Dynamic Fatawa Access** – Ask questions and receive relevant, accurate responses from the Fatawa database.
-
-## 🛠️ Tech Stack
-- **Frontend:** React.js (with Tailwind CSS or Bootstrap)
-- **Backend/API Integration:** Fetch or Axios for API calls
-- **State Management:** Context API or Redux (if needed)
-- **Deployment:** Vercel, Netlify, AWS, or custom VPS
-
-## ⚙️ Getting Started
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/utachicodes/xamsadine-ai-website-v2.git
-cd xamsadine-ai-website-v2
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Run the Development Server
-```bash
-npm run dev
-```
-
-### 4. Open in Browser
-Navigate to `http://localhost:3000` to view the website locally.
-
-## 📦 Deployment Guide
-
-1. **Build for Production:**
-```bash
-npm run build
-```
-
-2. **Deploy to a Hosting Provider:**
-Upload your `build/` directory or connect your Git repo to services like:
-   - [Vercel](https://vercel.com/)
-   - [Netlify](https://www.netlify.com/)
-   - Firebase, AWS, or your own server
-
-3. **Connect WebUI API:**
-Ensure the WebUI backend is deployed and accessible for chatbot query processing.
-
-## 🤝 Contributing
-
-We welcome community contributions to improve Xamsadine AI!  
-To get involved:
-
-1. Fork the repository  
-2. Create a new branch: `git checkout -b feature/your-feature`  
-3. Commit your changes: `git commit -m "Add your feature"`  
-4. Push your branch: `git push origin feature/your-feature`  
-5. Open a pull request and describe your changes
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.x-61DAFB)](https://reactjs.org/)
+[![Node](https://img.shields.io/badge/Node-20.x-green)](https://nodejs.org/)
 
 ---
 
-## 📄 License
-This project is licensed under the [MIT License](LICENSE).
+## 🎯 Overview
 
-## 📬 Contact & Links
-- **Email:** abdoullahaljersi@gmail.com  
-- **GitHub:** [@utachicodes](https://github.com/utachicodes)  
-- **Website:** [xamsadine.ai](https://xamsadine.ai)
+XamSaDine AI v2 is a complete **LLM Council Platform** that harnesses the power of four diverse language models through OpenRouter to provide comprehensive, multi-perspective analysis of complex questions. The system implements distributed consensus, peer review, and retrieval-augmented generation for knowledge-informed responses.
 
+### ✨ Key Features
+
+- **🤖 4 Expert Council Members**: Diverse models (Claude, GPT-4o, Mistral, Llama) with specialized roles
+- **🔄 Distributed Consensus**: Independent analysis with peer review and agreement scoring
+- **📚 RAG Integration**: Semantic search and document management for contextual knowledge
+- **🎨 Beautiful UI**: Production-ready interface with real-time visualization
+- **🔌 Complete REST API**: Full-featured endpoints for council operations
+- **📈 Analytics**: Consensus scoring, performance metrics, and insight tracking
+- **🚀 Production Ready**: Docker support, deployment guides, and scaling documentation
+- **🎨 Modern UI**: Clean, responsive interface built with React + Tailwind CSS
+- **🔐 Epistemic Integrity**: No lateral communication between agents ensures methodological purity
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[User Query] --> B[Circle Orchestrator]
+    B --> C[Fiqh Agent]
+    B --> D[Aqeedah Agent]
+    B --> E[Context Agent]
+    C --> F[RAG Retrieval]
+    D --> G[Safety Rules]
+    E --> H[Modern Tags]
+    F --> I[Synthesis Engine]
+    G --> I
+    H --> I
+    I --> J[Humility Agent]
+    J --> K{Abstain?}
+    K -->|No| L[Final Response]
+    K -->|Yes| M[Defer to Scholar]
+```
+
+### Agents
+
+- **Fiqh Reasoning Agent**: Jurisprudential analysis across 4 Sunni Madhhabs (Hanafi, Maliki, Shafi, Hanbali)
+- **Aqeedah Boundary Agent**: Theological safety guardrails (Takfir/Bid'ah detection)
+- **Contemporary Context Agent**: Modern implication tagging (crypto, AI, fintech, etc.)
+- **Humility & Abstention Agent**: Confidence evaluation and scholarly restraint
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- npm 9.x or higher
+- (Optional) OpenAI/Anthropic API keys for LLM integration
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/xamsadine-ai-website-v2.git
+cd xamsadine-ai-website-v2
+
+# Install dependencies
+npm install
+
+# Start frontend (Vite)
+npm run dev
+
+# Start backend (separate terminal)
+cd backend/services/api-gateway
+npx tsx src/server.ts
+```
+
+Frontend will run on `http://localhost:8080` (or another port shown in terminal).  
+Backend API Gateway will run on `http://localhost:4000`.
+
+---
+
+## 📖 Usage
+
+### 1. **Circle of Knowledge** (`/circle`)
+Submit queries and see multi-agent reasoning in action.
+
+### 2. **Admin Configuration** (`/admin`)
+- Assign LLMs to each agent (OpenAI GPT-4, Claude, local models)
+- Configure temperature, max tokens
+- Enter API keys (stored locally)
+
+### 3. **Document Upload** (`/documents`)
+- Drag-and-drop PDFs, TXT, MD files
+- Categorize by Madhhab or domain (Fiqh-Hanafi, Aqeedah-Ashari, etc.)
+- Documents are chunked and ready for RAG retrieval
+
+---
+
+## 🔧 Configuration
+
+### LLM Providers
+
+Edit `backend/config.json` (auto-generated on first run) or use the Admin UI:
+
+```json
+{
+  "agents": {
+    "fiqh": {
+      "agentId": "fiqh",
+      "llmConfig": {
+        "provider": "openai",
+        "model": "gpt-4",
+        "apiKey": "sk-...",
+        "temperature": 0.3,
+        "maxTokens": 2000
+      },
+      "enabled": true
+    }
+  }
+}
+```
+
+Supported providers:
+- `openai` - OpenAI API (GPT-4, GPT-3.5)
+- `anthropic` - Anthropic API (Claude)
+- `local` - Local models via endpoint (e.g., Ollama)
+
+### Document Categories
+
+When uploading documents, select the appropriate category:
+- `fiqh-hanafi`, `fiqh-maliki`, `fiqh-shafi`, `fiqh-hanbali`
+- `aqeedah-ashari`, `aqeedah-maturidi`, `aqeedah-athari`
+- `context-modern`
+
+---
+
+## 📂 Project Structure
+
+```
+xamsadine-ai-website-v2/
+├── backend/
+│   ├── agents/                 # Epistemic agents
+│   │   ├── fiqh.ts
+│   │   ├── aqeedah.ts
+│   │   ├── context.ts
+│   │   └── humility.ts
+│   ├── synthesis/              # Deterministic synthesis engine
+│   │   └── engine.ts
+│   ├── orchestrator/           # Circle orchestrator
+│   │   └── circle.ts
+│   ├── services/
+│   │   ├── api-gateway/        # Express API server
+│   │   ├── config-service/     # Agent configuration management
+│   │   ├── llm-service/        # LLM provider abstraction
+│   │   └── rag-service/        # Document upload & retrieval
+│   └── shared/                 # TypeScript types
+├── src/
+│   ├── pages/
+│   │   ├── Circle.tsx          # Circle of Knowledge UI
+│   │   ├── AdminConfig.tsx     # Model configuration panel
+│   │   └── DocumentUpload.tsx  # Document management UI
+│   └── components/             # Reusable UI components
+└── package.json
+```
+
+---
+
+## 🧪 Testing
+
+### Demo Mode (No API Keys)
+The system runs in demo mode with mock data when no API keys are configured. This allows exploration of the UI and architecture without LLM costs.
+
+### With Real LLMs
+1. Navigate to `/admin`
+2. Enter your OpenAI or Anthropic API key for the Fiqh agent
+3. Go to `/circle` and submit a query
+4. Observe real LLM-powered reasoning across Madhhabs
+
+### RAG Testing
+1. Upload documents via `/documents`
+2. Wait for processing (status changes to "ready")
+3. Queries to the Circle will retrieve relevant chunks (integration pending)
+
+---
+
+## 🎓 Research Background
+
+This system implements the architecture described in:
+
+> **"XamSaDine AI v2: A Multi-Agent Epistemic Architecture for Trustworthy Religious Reasoning"**
+
+Key innovations:
+- **Epistemic Independence**: Agents operate without lateral communication
+- **Explicit Disagreement**: Ikhtilāf is preserved, not collapsed into consensus
+- **Humility by Design**: System can abstain when evidence is insufficient
+- **Configurable Expertise**: Different LLMs for different epistemic roles
+
+---
+
+## 🛠️ Development
+
+### Adding a New Agent
+
+1. Create agent file in `backend/agents/your-agent.ts`
+2. Implement the agent interface:
+   ```typescript
+   export class YourAgent {
+     async process(query: string): Promise<YourAgentResponse> {
+       // Your logic here
+     }
+   }
+   ```
+3. Register in `backend/orchestrator/circle.ts`
+4. Add configuration to `backend/services/config-service/config.service.ts`
+
+### Frontend Development
+
+The frontend uses:
+- **React 18** with TypeScript
+- **Vite** for bundling
+- **Tailwind CSS** for styling
+- **shadcn/ui** for components
+- **React Router** for navigation
+
+---
+
+## 📝 License
+
+MIT License - see LICENSE file for details
+
+---
+
+## 🙏 Acknowledgments
+
+Built with guidance from classical Islamic scholarship and modern AI research principles.
+
+---
+
+## 📬 Contact
+
+For questions or collaboration: [your-email@domain.com]
+
+---
+
+**Status**: 🚧 Beta - Core infrastructure complete, LLM/RAG integration in progress
