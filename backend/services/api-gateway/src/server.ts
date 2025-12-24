@@ -333,6 +333,67 @@ app.delete("/api/documents/:id", async (req, res) => {
   }
 });
 
+// Translation API endpoints (Wolof support)
+app.post("/api/council/translate-to-wolof", async (req, res) => {
+  try {
+    const { translateToWolof } = await import("./routes/council-handler.ts");
+    await translateToWolof(req, res);
+  } catch (error: any) {
+    console.error("💥 Error in /api/council/translate-to-wolof:", error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: "An unexpected error occurred while translating to Wolof",
+      });
+    }
+  }
+});
+
+app.post("/api/council/translate-to-french", async (req, res) => {
+  try {
+    const { translateToFrench } = await import("./routes/council-handler.ts");
+    await translateToFrench(req, res);
+  } catch (error: any) {
+    console.error("💥 Error in /api/council/translate-to-french:", error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: "An unexpected error occurred while translating to French",
+      });
+    }
+  }
+});
+
+app.post("/api/council/ask-wolof", async (req, res) => {
+  try {
+    const { askCouncilWolof } = await import("./routes/council-handler.ts");
+    await askCouncilWolof(req, res);
+  } catch (error: any) {
+    console.error("💥 Error in /api/council/ask-wolof:", error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: "An unexpected error occurred while processing Wolof query",
+      });
+    }
+  }
+});
+
+app.post("/api/council/detect-language", async (req, res) => {
+  try {
+    const { detectLanguage } = await import("./routes/council-handler.ts");
+    await detectLanguage(req, res);
+  } catch (error: any) {
+    console.error("💥 Error in /api/council/detect-language:", error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: "An unexpected error occurred while detecting language",
+      });
+    }
+  }
+});
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
