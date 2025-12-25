@@ -1,42 +1,105 @@
 import * as React from "react";
 import { Sparkles, Sun, MoonStar, HelpCircle, Star } from "lucide-react";
-import LanguageToggle from "@/components/common/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type LanguageCode = "wo" | "fr" | "en";
 type Difficulty = "easy" | "medium" | "advanced";
 
-const quizByDifficulty: Record<
-  Difficulty,
-  { question: string; options: string[]; correct: string; hint: string }
+const quizByLanguage: Record<
+  LanguageCode,
+  Record<Difficulty, { question: string; options: string[]; correct: string; hint: string }>
 > = {
-  easy: {
-    question: "How many daily obligatory prayers are there in Islam?",
-    options: ["Three", "Five", "Seven"],
-    correct: "Five",
-    hint: "Think of Fajr, Dhuhr, ʿAsr, Maghrib, ʿIshāʾ.",
+  en: {
+    easy: {
+      question: "How many daily obligatory prayers are there in Islam?",
+      options: ["Three", "Five", "Seven"],
+      correct: "Five",
+      hint: "Think of Fajr, Dhuhr, ʿAsr, Maghrib, ʿIshāʾ.",
+    },
+    medium: {
+      question:
+        "In Maliki fiqh, what is one key condition for following an imām in congregational prayer?",
+      options: [
+        "Standing directly in front of the imām",
+        "Intending to follow the imām at the beginning of the prayer",
+        "Reciting Sūrat al-Fātiḥah aloud with the imām",
+      ],
+      correct: "Intending to follow the imām at the beginning of the prayer",
+      hint: "It relates to your niyyah (intention).",
+    },
+    advanced: {
+      question:
+        "According to many Maliki jurists, when can local custom (ʿurf) be used in rulings?",
+      options: [
+        "Whenever it is popular, even if it contradicts Qurʾān and Sunnah",
+        "When it does not oppose clear textual evidence and helps clarify contracts or practices",
+        "Only in matters of pure worship (ʿibādāt)",
+      ],
+      correct:
+        "When it does not oppose clear textual evidence and helps clarify contracts or practices",
+      hint: "Custom cannot override explicit texts.",
+    },
   },
-  medium: {
-    question:
-      "In Maliki fiqh, what is one key condition for following an imām in congregational prayer?",
-    options: [
-      "Standing directly in front of the imām",
-      "Intending to follow the imām at the beginning of the prayer",
-      "Reciting Sūrat al-Fātiḥah aloud with the imām",
-    ],
-    correct: "Intending to follow the imām at the beginning of the prayer",
-    hint: "It relates to your niyyah (intention).",
+  fr: {
+    easy: {
+      question: "Combien de prières obligatoires quotidiennes y a-t-il en Islam ?",
+      options: ["Trois", "Cinq", "Sept"],
+      correct: "Cinq",
+      hint: "Pense à Fajr, Dhuhr, ʿAsr, Maghrib, ʿIshāʾ.",
+    },
+    medium: {
+      question:
+        "En fiqh malikite, quelle est une condition clé pour suivre l’imam en prière collective ?",
+      options: [
+        "Se tenir directement devant l’imam",
+        "Avoir l’intention de suivre l’imam au début de la prière",
+        "Réciter la Fātiḥa à voix haute avec l’imam",
+      ],
+      correct: "Avoir l’intention de suivre l’imam au début de la prière",
+      hint: "Cela concerne la niyyah (intention).",
+    },
+    advanced: {
+      question:
+        "Selon de nombreux juristes malikites, quand peut-on utiliser la coutume locale (ʿurf) dans les règles ?",
+      options: [
+        "Chaque fois qu’elle est populaire, même si elle contredit le Coran et la Sunna",
+        "Lorsqu’elle n’oppose pas un texte clair et aide à clarifier des contrats ou pratiques",
+        "Uniquement dans les questions d’adoration (ʿibādāt)",
+      ],
+      correct:
+        "Lorsqu’elle n’oppose pas un texte clair et aide à clarifier des contrats ou pratiques",
+      hint: "La coutume ne peut pas contredire des textes explicites.",
+    },
   },
-  advanced: {
-    question:
-      "According to many Maliki jurists, when can local custom (ʿurf) be used in rulings?",
-    options: [
-      "Whenever it is popular, even if it contradicts Qurʾān and Sunnah",
-      "When it does not oppose clear textual evidence and helps clarify contracts or practices",
-      "Only in matters of pure worship (ʿibādāt)",
-    ],
-    correct:
-      "When it does not oppose clear textual evidence and helps clarify contracts or practices",
-    hint: "Custom cannot override explicit texts.",
+  wo: {
+    easy: {
+      question: "Njulli yu séentu bu bépp bés ñaata la ci Islam ?",
+      options: ["Ñetti", "Juroom", "Juróom-ñaari"],
+      correct: "Juroom",
+      hint: "Xool Fajr, Dhuhr, ʿAsr, Maghrib, ʿIshāʾ.",
+    },
+    medium: {
+      question:
+        "Ci fiqh Maliki, lan la benn xaalis bu am solo ngir topp imâm ci njulli bu jàmm ?",
+      options: [
+        "Taxaw ci kanam imâm",
+        "Niyyah ngir topp imâm ci tàmbali njulli",
+        "Waxal Sūrat al-Fātiḥah ci kaw ak imâm",
+      ],
+      correct: "Niyyah ngir topp imâm ci tàmbali njulli",
+      hint: "Li jëm ci sa niyyah.",
+    },
+    advanced: {
+      question:
+        "Ni jurist yu bari ci Maliki wax, kan la ʿurf (àdetu dëkkuwaay) mën cee jariñu ci tegtal yi ?",
+      options: [
+        "Saa su nekk bu ne, su mel la muy di wacc Qurʼaan ak Sunna",
+        "Su mu du séen ak mbind yu wér te mu dëgëral jëmmante ak jumtukaay yi",
+        "Ci mbiri jaamu rekk (ʿibādāt)",
+      ],
+      correct: "Su mu du séen ak mbind yu wér te mu dëgëral jëmmante ak jumtukaay yi",
+      hint: "Àdet mënul weñ wott mbind yu wér.",
+    },
   },
 };
 
@@ -224,7 +287,7 @@ const uiText: Record<
 };
 
 const Dashboard: React.FC = () => {
-  const [lang, setLang] = React.useState<LanguageCode>("fr");
+  const { language } = useLanguage();
   const [difficulty, setDifficulty] = React.useState<Difficulty>("easy");
   const [selectedOption, setSelectedOption] = React.useState<string | null>(
     null,
@@ -232,9 +295,9 @@ const Dashboard: React.FC = () => {
   const [submitted, setSubmitted] = React.useState(false);
   const [loadingDaily] = React.useState(false);
 
-  const daily = MOCK_DAILY_BY_LANG[lang];
-  const t = uiText[lang];
-  const quiz = quizByDifficulty[difficulty];
+  const daily = MOCK_DAILY_BY_LANG[language];
+  const t = uiText[language];
+  const quiz = quizByLanguage[language][difficulty];
   const isCorrect = submitted && selectedOption === quiz.correct;
 
   return (
@@ -253,9 +316,7 @@ const Dashboard: React.FC = () => {
             <p className="mt-2 text-islamic-dark/70 max-w-xl">{t.intro}</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <LanguageToggle value={lang} onChange={setLang} />
-          </div>
+          <div className="flex items-center gap-3" />
         </header>
 
         <div className="grid gap-6 md:grid-cols-3">

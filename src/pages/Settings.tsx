@@ -1,9 +1,10 @@
 import React from "react";
 import { SlidersHorizontal, Volume2, Globe2, Shield } from "lucide-react";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Settings: React.FC = () => {
-  const [lang, setLang] = React.useState<"wo" | "fr" | "en">("en");
+  const { language, setLanguage } = useLanguage();
 
   return (
     <div className="flex-1">
@@ -24,7 +25,7 @@ const Settings: React.FC = () => {
             </p>
           </div>
 
-          <LanguageToggle value={lang} onChange={setLang} />
+          <LanguageToggle value={language} onChange={setLanguage} />
         </header>
 
         <div className="grid gap-6 md:grid-cols-2">

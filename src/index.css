@@ -38,6 +38,79 @@
     --radius: 1rem;
   }
 
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pattern-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes blob {
+	0% {
+		transform: translate(0px, 0px) scale(1);
+	}
+	33% {
+		transform: translate(30px, -50px) scale(1.1);
+	}
+	66% {
+		transform: translate(-20px, 20px) scale(0.9);
+	}
+	100% {
+		transform: translate(0px, 0px) scale(1);
+	}
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
   * {
     @apply border-border;
   }
@@ -165,7 +238,6 @@
   }
   
   .btn-islamic:hover {
-    transform: translateY(-1px);
     box-shadow: 0 15px 35px rgba(4, 120, 87, 0.35), 
                 0 6px 16px rgba(0, 0, 0, 0.12);
   }
@@ -175,7 +247,7 @@
   }
   
   .btn-islamic:active {
-    transform: translateY(0);
+
   }
   
   /* Premium Button - Outlined */

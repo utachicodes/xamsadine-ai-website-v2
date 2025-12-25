@@ -264,7 +264,9 @@ export default {
 				'gradient-shift': 'gradient-shift 8s ease infinite',
 				'fade-in-up': 'fade-in-up 0.6s ease-out',
 				'scale-in': 'scale-in 0.4s ease-out',
-				'pattern-rotate': 'pattern-rotate 40s linear infinite'
+				'pattern-rotate': 'pattern-rotate 40s linear infinite',
+				'blob': 'blob 7s infinite',
+				'wave': 'wave 2s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'islamic-pattern': "url('/pattern.svg')",

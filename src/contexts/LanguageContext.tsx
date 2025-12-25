@@ -1,0 +1,289 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+type Language = 'en' | 'fr' | 'wo';
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
+
+const translations = {
+  en: {
+    'chat.placeholder': 'Ask me anything about Islam...',
+    'chat.welcome': 'Welcome to XamSaDine AI',
+    'chat.welcome.subtitle': 'Get authentic Islamic answers from multiple scholarly perspectives.',
+    'chat.thinking': 'Thinking...',
+    'chat.error': 'Failed to get response. Please try again.',
+    'status.online': 'Online',
+    'auth.required': 'Authentication Required',
+    'auth.signin': 'Please sign in to ask questions',
+    'nav.daily': 'Daily Islam',
+    'nav.chat': 'Chat',
+    'nav.settings': 'Settings',
+    'nav.admin': 'Admin',
+    'nav.circle': 'Circle of Knowledge',
+    'nav.documents': 'Documents',
+    'nav.signout': 'Sign Out',
+    'nav.signin': 'Sign In',
+    'nav.home': 'Home',
+    // Hero
+    'hero.heading': 'Islamic Knowledge\nAt Your Fingertips',
+    'hero.subtitle': 'Ask questions and get answers from multiple scholarly sources.',
+    'hero.popular': 'Popular:',
+    'hero.ask_now': 'Ask Now',
+    // Footer
+    'footer.contact': 'Contact Us',
+    'footer.description': 'A platform dedicated to providing authentic Islamic knowledge through expert scholars.',
+    'footer.rights': 'All Rights Reserved.',
+    // Index (Landing)
+    'index.what_title_prefix': 'An AI advisor for',
+    'index.what_title_gradient': 'Islamic guidance',
+    'index.what_subtitle': 'XamSaDine uses AI backed by expert scholars to provide structured, authentic answers to your questions about Islam.',
+    'index.guided_fatwa_title': 'Guided Fatwa',
+    'index.guided_fatwa_desc': "Ask any Islamic question and receive a structured answer with clarification, hukm, evidence, explanation, and advice.",
+    'index.try_it_now': 'Try it now',
+    'index.daily_islam_title': 'Daily Islam',
+    'index.daily_islam_desc': "Start each day with an ayah, hadith, dua, a small fact, and a weekly quiz to keep your knowledge fresh.",
+    'index.see_today': 'See today',
+    'index.fiqh_map_title': 'Fiqh Map',
+    'index.fiqh_map_desc': 'Explore fiqh themes across all four madhabs: worship, transactions, family, ethics, and local contexts.',
+    'index.explore': 'Explore',
+    'index.how_title_prefix': 'Built for',
+    'index.how_title_gradient': 'Senegal and the Ummah',
+    'index.how_subtitle': 'Every answer follows a calm, structured flow rooted in authentic sources.',
+    'index.step1_title': 'Your madhab, your answers',
+    'index.step1_desc': "Choose your school of fiqh (Hanafi, Maliki, Shafi'i, Hanbali) and receive answers grounded in that tradition.",
+    'index.step2_title': 'Senegalese context',
+    'index.step2_desc': 'XamSaDine understands local customs, language (Wolof, French), and the realities of Muslim life in Senegal.',
+    'index.step3_title': 'Structured & authenticated',
+    'index.step3_desc': "Each fatwa flows through 5 steps with clear references from Qur'an, Hadith, and classical texts of your madhab.",
+    'index.step4_title': 'Islamic questions only',
+    'index.step4_desc': 'XamSaDine is dedicated to Islamic guidance. It gently declines non-Islamic topics to stay focused.',
+    'index.final_cta_title': 'Ready to ask your first question?',
+    'index.final_cta_desc': "Start a guided fatwa session or explore today's daily content. XamSaDine is here to walk with you.",
+    'index.ask_question_btn': 'Ask a question',
+    'index.see_daily_btn': 'See Daily Islam',
+    // Login
+    'login.title': 'Welcome Back',
+    'login.subtitle': 'Sign in to access your account.',
+    'login.create_account_title': 'Create an Account',
+    'login.create_account_subtitle': 'Enter your details to get started.',
+    'login.email': 'Email address',
+    'login.password': 'Password',
+    'login.remember_me': 'Remember me',
+    'login.forgot_password': 'Forgot your password?',
+    'login.processing': 'Processing...',
+    'login.sign_in': 'Sign In',
+    'login.sign_up': 'Sign Up',
+    'login.toggle_have_account': 'Already have an account?',
+    'login.toggle_no_account': "Don't have an account?",
+    'common.success': 'Success',
+    'common.error': 'Error',
+    'login.success_signed_in': 'You have been logged in successfully!',
+    'login.success_signed_up': 'Your account has been created successfully!',
+    'login.failed': 'Login failed',
+    'login.failed_desc': 'Could not sign in',
+    // NotFound
+    'notfound.title': '404',
+    'notfound.message': 'Oops! Page not found',
+    'notfound.return_home': 'Return to Home'
+  },
+  fr: {
+    'chat.placeholder': 'Demandez-moi quoi que ce soit sur l\'Islam...',
+    'chat.welcome': 'Bienvenue sur XamSaDine AI',
+    'chat.welcome.subtitle': 'Obtenez des réponses islamiques authentiques de multiples perspectives savantes.',
+    'chat.thinking': 'Réflexion...',
+    'chat.error': 'Échec de la réponse. Veuillez réessayer.',
+    'status.online': 'En ligne',
+    'auth.required': 'Authentification Requise',
+    'auth.signin': 'Veuillez vous connecter pour poser des questions',
+    'nav.daily': 'Islam Quotidien',
+    'nav.chat': 'Chat',
+    'nav.settings': 'Paramètres',
+    'nav.admin': 'Admin',
+    'nav.circle': 'Cercle de Savoir',
+    'nav.documents': 'Documents',
+    'nav.signout': 'Déconnexion',
+    'nav.signin': 'Connexion',
+    'nav.home': 'Accueil',
+    // Hero
+    'hero.heading': 'Connaissance Islamique\nÀ Portée de Main',
+    'hero.subtitle': 'Posez vos questions et obtenez des réponses de plusieurs sources savantes.',
+    'hero.popular': 'Populaire :',
+    'hero.ask_now': 'Poser maintenant',
+    // Footer
+    'footer.contact': 'Contactez-nous',
+    'footer.description': 'Une plateforme dédiée à fournir un savoir islamique authentique à travers des savants experts.',
+    'footer.rights': 'Tous droits réservés.',
+    // Index
+    'index.what_title_prefix': 'Un conseiller IA pour',
+    'index.what_title_gradient': "l'orientation islamique",
+    'index.what_subtitle': "XamSaDine utilise l'IA, soutenue par des savants, pour fournir des réponses authentiques et structurées à vos questions sur l'Islam.",
+    'index.guided_fatwa_title': 'Fatwa guidée',
+    'index.guided_fatwa_desc': "Posez toute question islamique et recevez une réponse structurée avec clarification, hukm, preuves, explication et conseils.",
+    'index.try_it_now': 'Essayez maintenant',
+    'index.daily_islam_title': 'Islam quotidien',
+    'index.daily_islam_desc': "Commencez chaque jour avec un verset, un hadith, une dou'a, un petit fait, et un quiz hebdomadaire pour entretenir votre savoir.",
+    'index.see_today': "Voir aujourd'hui",
+    'index.fiqh_map_title': 'Carte du fiqh',
+    'index.fiqh_map_desc': "Explorez les thèmes du fiqh à travers les quatre madhabs : adoration, transactions, famille, éthique, et contextes locaux.",
+    'index.explore': 'Explorer',
+    'index.how_title_prefix': 'Conçu pour',
+    'index.how_title_gradient': "le Sénégal et l'Oumma",
+    'index.how_subtitle': "Chaque réponse suit un flux calme et structuré, ancré dans des sources authentiques.",
+    'index.step1_title': 'Votre madhab, vos réponses',
+    'index.step1_desc': "Choisissez votre école de fiqh (hanafi, maliki, shafi'i, hanbali) et recevez des réponses adaptées à cette tradition.",
+    'index.step2_title': 'Contexte sénégalais',
+    'index.step2_desc': "XamSaDine comprend les coutumes locales, la langue (wolof, français) et la réalité de la vie musulmane au Sénégal.",
+    'index.step3_title': 'Structuré et authentifié',
+    'index.step3_desc': "Chaque fatwa suit 5 étapes avec des références claires au Coran, à la Sunna et aux textes classiques de votre madhab.",
+    'index.step4_title': 'Questions islamiques uniquement',
+    'index.step4_desc': "XamSaDine est dédié à l'orientation islamique et décline les sujets non islamiques pour rester focalisé.",
+    'index.final_cta_title': 'Prêt à poser votre première question ?',
+    'index.final_cta_desc': "Lancez une session de fatwa guidée ou explorez le contenu quotidien d'aujourd'hui. XamSaDine vous accompagne.",
+    'index.ask_question_btn': 'Poser une question',
+    'index.see_daily_btn': 'Voir Islam quotidien',
+    // Login
+    'login.title': 'Bon retour',
+    'login.subtitle': 'Connectez-vous pour accéder à votre compte.',
+    'login.create_account_title': 'Créer un compte',
+    'login.create_account_subtitle': 'Entrez vos informations pour commencer.',
+    'login.email': 'Adresse email',
+    'login.password': 'Mot de passe',
+    'login.remember_me': 'Se souvenir de moi',
+    'login.forgot_password': 'Mot de passe oublié ?',
+    'login.processing': 'Traitement...',
+    'login.sign_in': 'Connexion',
+    'login.sign_up': 'Inscription',
+    'login.toggle_have_account': 'Vous avez déjà un compte ?',
+    'login.toggle_no_account': "Vous n'avez pas de compte ?",
+    'common.success': 'Succès',
+    'common.error': 'Erreur',
+    'login.success_signed_in': 'Vous êtes connecté avec succès !',
+    'login.success_signed_up': 'Votre compte a été créé avec succès !',
+    'login.failed': 'Échec de la connexion',
+    'login.failed_desc': 'Impossible de se connecter',
+    // NotFound
+    'notfound.title': '404',
+    'notfound.message': 'Oups ! Page introuvable',
+    'notfound.return_home': "Retour à l'accueil"
+  },
+  wo: {
+    'chat.placeholder': 'Nan ma wax lé l\'Islaam...',
+    'chat.welcome': 'Barkël XamSaDine AI',
+    'chat.welcome.subtitle': 'Wañ japp ndax mi jëmm ju Iislaam ji yore wax yu bari xam-xam.',
+    'chat.thinking': 'Mi nangu tànn...',
+    'chat.error': 'Wula ju topp. Jàppleen ndax.',
+    'status.online': 'Ci jàmm',
+    'auth.required': 'Ndaxul Fàww',
+    'auth.signin': 'Jóogleen ngir nànji',
+    'nav.daily': 'Islaam Bépp Népp',
+    'nav.chat': 'Waxtaan',
+    'nav.settings': 'Tànn',
+    'nav.admin': 'Admin',
+    'nav.circle': 'Wàllu Xam-xam',
+    'nav.documents': 'Papira',
+    'nav.signout': 'Jóggé',
+    'nav.signin': 'Jóogle',
+    'nav.home': 'Kër',
+    // Hero
+    'hero.heading': 'Xam-xam bu Islaam\nCi Sa Loxo',
+    'hero.subtitle': 'Laajal te jël tontu yi jóllale ay xam-xamkat yu bari.',
+    'hero.popular': 'Lu ñu bëgg:',
+    'hero.ask_now': 'Laaj leegi',
+    // Footer
+    'footer.contact': 'Jokkoolleen ak ñoom',
+    'footer.description': 'Dal bi mu ngiy jox xam-xam bu dëggu ci Iislaam, jëmm ak xam-xamkat yi.',
+    'footer.rights': 'Yenn sañ-saŋ yu mën.',
+    // Index
+    'index.what_title_prefix': 'Bàkkaleer AI ngir',
+    'index.what_title_gradient': 'ndigël Islam',
+    'index.what_subtitle': 'XamSaDine dafay jëfandikoo AI ak xam-xamkat yu xam-xam ngir jox tontu yu wur.',
+    'index.guided_fatwa_title': 'Fatwaa tegu',
+    'index.guided_fatwa_desc': "Laaj benn laaj bu Islam te jot tontu bu séentu ak wérante, hükm, dalil, te xamal te ndigël.",
+    'index.try_it_now': 'Jéllal ko leegi',
+    'index.daily_islam_title': 'Islaam bépp népp',
+    'index.daily_islam_desc': "Tàmbalee guddi bu nekk ak ayah, hadith, du'aa, xam-xam bu ndaw, ak test bu wékki ngir tëral sa xam-xam.",
+    'index.see_today': 'Gis leegi',
+    'index.fiqh_map_title': 'Karte bu fiqh',
+    'index.fiqh_map_desc': 'Seet téem yu fiqh ci ñeent madhab yi: jaamu, jëmbët, kër, njublaay ak xeetu dëkkuwaay.',
+    'index.explore': 'Seet',
+    'index.how_title_prefix': 'Soppiko ci',
+    'index.how_title_gradient': 'Sénégal ak Ummah bi',
+    'index.how_subtitle': 'Tontu bépp di topp yoon bu sukk ak tëgg ci mbind yi wér.',
+    'index.step1_title': 'Sa madhab, sa tontu',
+    'index.step1_desc': "Fal sa madhab (Hanafi, Maliki, Shafi'i, Hanbali) te jot tontu yu nëbb ak sa seetaan.",
+    'index.step2_title': 'Kontexte bu Sénégal',
+    'index.step2_desc': 'XamSaDine xamu àdett yi, làkk (Wolof, Faransa), ak xaal yi muusleme yi ci Sénégal.',
+    'index.step3_title': 'Tabaxlu ak dëgg',
+    'index.step3_desc': "Fatwaa bépp di dox ci 5 yoon ak dalil yu wér ci Al-Qur'aan, Sunna, ak kitabu yu classik yu sa madhab.",
+    'index.step4_title': 'Laaj yu Islam rekk',
+    'index.step4_desc': 'XamSaDine di tànn ci ndigël bu Islam, di ñettal laaj yu dul jëm ci Islam ngir wër.',
+    'index.final_cta_title': 'Ngir laaj sa laaj bu jëkk?',
+    'index.final_cta_desc': "Tambalee session bu fatwaa tegu walla xool leegi ci 'Islaam bépp népp'. XamSaDine dina dox ak yaw.",
+    'index.ask_question_btn': 'Laaj benn laaj',
+    'index.see_daily_btn': 'Gis Islaam bépp népp',
+    // Login
+    'login.title': 'Dalal jàmm',
+    'login.subtitle': 'Jóogle ngir jàll ci sa koont.',
+    'login.create_account_title': 'Sàkk koont',
+    'login.create_account_subtitle': 'Tàmbalee ci say jumtukaay.',
+    'login.email': 'Email',
+    'login.password': 'Mottali',
+    'login.remember_me': 'Fii woon',
+    'login.forgot_password': 'Mottali nga leen?',
+    'login.processing': 'Mi dox...',
+    'login.sign_in': 'Jóogle',
+    'login.sign_up': 'Bind ak koont',
+    'login.toggle_have_account': 'Nga amoon koont?',
+    'login.toggle_no_account': 'Amuloo koont?',
+    'common.success': 'Jàmm rekk',
+    'common.error': 'Njumte',
+    'login.success_signed_in': 'Jóogle nañu la ak njàmm!',
+    'login.success_signed_up': 'Koont bu bees nañu sàkk ko!',
+    'login.failed': 'Jóogle da faaw',
+    'login.failed_desc': 'Mënul jóogle',
+    // NotFound
+    'notfound.title': '404',
+    'notfound.message': 'Wacc! Xët bi gisul',
+    'notfound.return_home': 'Dellusi kër'
+  },
+};
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+};
+
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguageState] = useState<Language>('en');
+
+  // Load saved language preference
+  useEffect(() => {
+    const saved = localStorage.getItem('xamsadine-language') as Language;
+    if (saved && ['en', 'fr', 'wo'].includes(saved)) {
+      setLanguageState(saved);
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('xamsadine-language', lang);
+  };
+
+  const t = (key: string): string => {
+    return translations[language][key as keyof typeof translations.en] || key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};

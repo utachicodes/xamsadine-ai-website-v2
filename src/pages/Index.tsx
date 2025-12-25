@@ -2,8 +2,12 @@ import * as React from 'react';
 import HeroSection from '@/components/HeroSection';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen, Sparkles, ArrowRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/auth/AuthContext';
 
 const Index = () => {
+  const { t } = useLanguage();
+  const { user } = useAuth();
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
@@ -15,10 +19,10 @@ const Index = () => {
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold text-islamic-dark mb-4">
-                  An AI advisor for <span className="text-gradient">Islamic guidance</span>
+                  {t('index.what_title_prefix')} <span className="text-gradient">{t('index.what_title_gradient')}</span>
                 </h2>
                 <p className="text-lg text-islamic-dark/70 max-w-2xl mx-auto">
-                  XamSaDine uses AI backed by expert scholars to provide structured, authentic answers to your questions about Islam.
+                  {t('index.what_subtitle')}
                 </p>
               </div>
               
@@ -27,38 +31,32 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-full bg-islamic-green/10 flex items-center justify-center mb-4">
                     <MessageSquare className="w-6 h-6 text-islamic-green" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Guided Fatwa</h3>
-                  <p className="text-islamic-dark/70 text-sm mb-3">
-                    Ask any Islamic question and receive a structured answer with clarification, hukm, evidence, explanation, and advice.
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2">{t('index.guided_fatwa_title')}</h3>
+                  <p className="text-islamic-dark/70 text-sm mb-3">{t('index.guided_fatwa_desc')}</p>
                   <span className="text-sm text-islamic-green font-medium inline-flex items-center gap-1">
-                    Try it now <ArrowRight className="w-4 h-4" />
+                    {t('index.try_it_now')} <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
 
-                <Link to="/dashboard" className="islamic-card p-6 hover:scale-105 transition-transform">
+                <Link to={user ? "/dashboard" : "/login"} className="islamic-card p-6 hover:scale-105 transition-transform">
                   <div className="w-12 h-12 rounded-full bg-islamic-blue/10 flex items-center justify-center mb-4">
                     <Calendar className="w-6 h-6 text-islamic-blue" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Daily Islam</h3>
-                  <p className="text-islamic-dark/70 text-sm mb-3">
-                    Start each day with an ayah, hadith, dua, a small fact, and a weekly quiz to keep your knowledge fresh.
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2">{t('index.daily_islam_title')}</h3>
+                  <p className="text-islamic-dark/70 text-sm mb-3">{t('index.daily_islam_desc')}</p>
                   <span className="text-sm text-islamic-blue font-medium inline-flex items-center gap-1">
-                    See today <ArrowRight className="w-4 h-4" />
+                    {t('index.see_today')} <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
 
-                <Link to="/fiqh" className="islamic-card p-6 hover:scale-105 transition-transform">
+                <Link to={user ? "/fiqh" : "/login"} className="islamic-card p-6 hover:scale-105 transition-transform">
                   <div className="w-12 h-12 rounded-full bg-islamic-gold/10 flex items-center justify-center mb-4">
                     <BookOpen className="w-6 h-6 text-islamic-gold" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Fiqh Map</h3>
-                  <p className="text-islamic-dark/70 text-sm mb-3">
-                    Explore fiqh themes across all four madhabs: worship, transactions, family, ethics, and local contexts.
-                  </p>
+                  <h3 className="text-xl font-semibold mb-2">{t('index.fiqh_map_title')}</h3>
+                  <p className="text-islamic-dark/70 text-sm mb-3">{t('index.fiqh_map_desc')}</p>
                   <span className="text-sm text-islamic-gold font-medium inline-flex items-center gap-1">
-                    Explore <ArrowRight className="w-4 h-4" />
+                    {t('index.explore')} <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
               </div>
@@ -72,11 +70,9 @@ const Index = () => {
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold text-islamic-dark mb-4">
-                  Built for <span className="text-gradient">Senegal and the Ummah</span>
+                  {t('index.how_title_prefix')} <span className="text-gradient">{t('index.how_title_gradient')}</span>
                 </h2>
-                <p className="text-lg text-islamic-dark/70">
-                  Every answer follows a calm, structured flow rooted in authentic sources.
-                </p>
+                <p className="text-lg text-islamic-dark/70">{t('index.how_subtitle')}</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -86,8 +82,8 @@ const Index = () => {
                       <span className="text-islamic-green font-bold">1</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-islamic-dark mb-1">Your madhab, your answers</h4>
-                      <p className="text-sm text-islamic-dark/70">Choose your school of fiqh (Hanafi, Maliki, Shafi'i, Hanbali) and receive answers grounded in that tradition.</p>
+                      <h4 className="font-semibold text-islamic-dark mb-1">{t('index.step1_title')}</h4>
+                      <p className="text-sm text-islamic-dark/70">{t('index.step1_desc')}</p>
                     </div>
                   </div>
                 </div>
@@ -98,8 +94,8 @@ const Index = () => {
                       <span className="text-islamic-green font-bold">2</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-islamic-dark mb-1">Senegalese context</h4>
-                      <p className="text-sm text-islamic-dark/70">XamSaDine understands local customs, language (Wolof, French), and the realities of Muslim life in Senegal.</p>
+                      <h4 className="font-semibold text-islamic-dark mb-1">{t('index.step2_title')}</h4>
+                      <p className="text-sm text-islamic-dark/70">{t('index.step2_desc')}</p>
                     </div>
                   </div>
                 </div>
@@ -110,8 +106,8 @@ const Index = () => {
                       <span className="text-islamic-green font-bold">3</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-islamic-dark mb-1">Structured & authenticated</h4>
-                      <p className="text-sm text-islamic-dark/70">Each fatwa flows through 5 steps with clear references from Qur'an, Hadith, and classical texts of your madhab.</p>
+                      <h4 className="font-semibold text-islamic-dark mb-1">{t('index.step3_title')}</h4>
+                      <p className="text-sm text-islamic-dark/70">{t('index.step3_desc')}</p>
                     </div>
                   </div>
                 </div>
@@ -122,8 +118,8 @@ const Index = () => {
                       <span className="text-islamic-green font-bold">4</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-islamic-dark mb-1">Islamic questions only</h4>
-                      <p className="text-sm text-islamic-dark/70">XamSaDine is dedicated to Islamic guidance. It gently declines non-Islamic topics to stay focused.</p>
+                      <h4 className="font-semibold text-islamic-dark mb-1">{t('index.step4_title')}</h4>
+                      <p className="text-sm text-islamic-dark/70">{t('index.step4_desc')}</p>
                     </div>
                   </div>
                 </div>
@@ -139,17 +135,14 @@ const Index = () => {
             <div className="max-w-3xl mx-auto text-center">
               <Sparkles className="w-12 h-12 text-islamic-gold mx-auto mb-6" />
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Ready to ask your first question?
+                {t('index.final_cta_title')}
               </h2>
               <p className="text-xl text-white/80 mb-8">
-                Start a guided fatwa session or explore today's daily content. XamSaDine is here to walk with you.
+                {t('index.final_cta_desc')}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link to="/fatwa" className="btn-islamic">
-                  Ask a question
-                </Link>
-                <Link to="/dashboard" className="px-6 py-3 font-medium rounded-full bg-white text-islamic-green shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-opacity-90 active:scale-95">
-                  See Daily Islam
+                  {t('index.ask_question_btn')}
                 </Link>
               </div>
             </div>

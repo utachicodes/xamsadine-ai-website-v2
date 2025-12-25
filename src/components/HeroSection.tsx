@@ -1,41 +1,41 @@
-
 import React, { useState } from 'react';
-import { Search, Sparkles } from 'lucide-react';
+import { Search, Sparkles, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/auth/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const HeroSection = () => {
   const [question, setQuestion] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const statColorClass = (color: string) => {
-    switch (color) {
-      case 'islamic-green':
-        return 'text-islamic-green-300';
-      case 'islamic-teal':
-        return 'text-islamic-teal-300';
-      case 'islamic-gold':
-        return 'text-islamic-gold-300';
-      default:
-        return 'text-white';
-    }
-  };
+  const { user } = useAuth();
+  const { t, language } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!question.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a question",
+        title: t("Error"),
+        description: t("Please enter a question"),
         variant: "destructive"
       });
       return;
     }
 
-    navigate(`/fatwa?q=${encodeURIComponent(question)}`);
+    if (!user) {
+      toast({
+        title: t('auth.required'),
+        description: t('auth.signin'),
+        variant: "destructive"
+      });
+      navigate('/login');
+      return;
+    }
+
+    navigate('/chat');
   };
 
   return (
@@ -47,45 +47,36 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-hero-gradient-alt"></div>
 
       {/* Animated Floating Orbs */}
-      <div className="absolute top-24 right-[12%] w-72 h-72 bg-islamic-teal-400 rounded-full filter blur-2xl opacity-20"></div>
-      <div className="absolute bottom-24 left-[12%] w-64 h-64 bg-islamic-gold-400 rounded-full filter blur-2xl opacity-18"></div>
-      <div className="absolute top-44 left-[22%] w-60 h-60 bg-islamic-blue-400 rounded-full filter blur-2xl opacity-14"></div>
+      <div className="absolute top-24 right-[12%] w-72 h-72 bg-islamic-teal-400 rounded-full filter blur-2xl opacity-20 animate-blob"></div>
+      <div className="absolute bottom-24 left-[12%] w-64 h-64 bg-islamic-gold-400 rounded-full filter blur-2xl opacity-18 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-44 left-[22%] w-60 h-60 bg-islamic-blue-400 rounded-full filter blur-2xl opacity-14 animate-blob animation-delay-4000"></div>
 
       {/* Pattern Overlay */}
       <div className="absolute inset-0 pattern-bg opacity-10"></div>
 
       <div className="container relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-8">
-            <Sparkles className="w-4 h-4 text-islamic-gold-300" />
-            <span className="text-sm font-medium text-white/90">Multi-Agent Epistemic Architecture</span>
-          </div>
-
           {/* Main Heading */}
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            <span className="inline-block">Islamic</span>{' '}
-            <span className="inline-block bg-clip-text text-transparent bg-gold-gradient">Knowledge</span>
-            <br />
-            <span className="inline-block">At Your</span>{' '}
-            <span className="inline-block bg-clip-text text-transparent bg-gold-gradient">Fingertips</span>
+            <span className="inline-block bg-clip-text text-transparent bg-gold-gradient animate-wave whitespace-pre-line">
+              {t('hero.heading')}
+            </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Get authentic answers from multiple independent scholarly perspectives,
-            preserving <span className="text-islamic-gold-300 font-semibold">ikhtilaf</span> and epistemic humility
+            {t('hero.subtitle')}
           </p>
 
           {/* Search Form */}
           <form onSubmit={handleSubmit} className="relative max-w-3xl mx-auto mb-8">
-            <div className="relative group">
+            <div className="relative">
               <input
                 type="text"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 className="search-input text-islamic-dark placeholder:text-islamic-dark/40 pr-40"
-                placeholder="What do you want to know about Islam?"
+                placeholder={t('chat.placeholder')}
               />
 
               <Button
@@ -93,27 +84,36 @@ const HeroSection = () => {
                 className="absolute right-2 top-1/2 -translate-y-1/2 btn-islamic"
               >
                 <Search className="mr-2 h-4 w-4" />
-                Ask Now
+                {t('hero.ask_now')}
               </Button>
-
-              {/* Glow effect on focus */}
-              <div className="absolute inset-0 rounded-full bg-islamic-green-500/12 blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 -z-10"></div>
             </div>
           </form>
 
           {/* Popular Topics */}
           <div className="flex flex-wrap justify-center gap-3 items-center">
-            <span className="text-sm text-white/60 font-medium">Popular:</span>
-            {[
-              'Prayer of the traveller',
-              'What breaks my fast',
-              'Hajj guide',
-              'Islamic finance'
-            ].map((term, idx) => (
+            <span className="text-sm text-white/60 font-medium">{t('hero.popular')}</span>
+            {[...(
+              language === 'fr'
+                ? ['Prière du voyageur', 'Ce qui annule mon jeûne', 'Guide du Hajj']
+                : language === 'wo'
+                ? ['Namaz bu ñu dox', 'Lu tëju suum gi', 'Jël Hajj']
+                : ['Prayer of the traveller', 'What breaks my fast', 'Hajj guide']
+            )].map((term, idx) => (
               <button
                 key={term}
                 className="group relative px-4 py-2 rounded-full text-sm font-medium text-white/90 transition-colors duration-200 hover:text-white"
-                onClick={() => setQuestion(term)}
+                onClick={() => {
+                  if (!user) {
+                    toast({
+                      title: t('auth.required'),
+                      description: t('auth.signin'),
+                      variant: "destructive"
+                    });
+                    navigate('/login');
+                    return;
+                  }
+                  setQuestion(term);
+                }}
               >
                 {/* Glassmorphic background */}
                 <div className="absolute inset-0 rounded-full bg-white/10 border border-white/20 group-hover:bg-white/18 group-hover:border-white/30 transition-all duration-200"></div>
@@ -126,26 +126,8 @@ const HeroSection = () => {
             ))}
           </div>
 
-          {/* Trust Indicators */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-            {[
-              { label: 'Scholars Consulted', value: '4+', color: 'islamic-green' },
-              { label: 'Active Users', value: '1K+', color: 'islamic-teal' },
-              { label: 'Queries Answered', value: '5K+', color: 'islamic-gold' }
-            ].map((stat, idx) => (
-              <div
-                key={stat.label}
-                className="glass-panel rounded-2xl p-6"
-              >
-                <div className={`text-3xl md:text-4xl font-bold ${statColorClass(stat.color)} mb-2`}>
-                  {stat.value}
-                </div>
-                <div className="text-sm text-white/70">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Spacer for better visual balance */}
+          <div className="mt-16"></div>
         </div>
       </div>
 

@@ -40,6 +40,7 @@ if (existsSync(envPath)) {
 // Import routes after env is loaded
 const { postFatwa } = await import("./routes/fatwa.ts");
 const { getDaily } = await import("./routes/daily.ts");
+import chatRoutes from "./chat.js";
 
 // Catch unhandled promise rejections
 process.on("unhandledRejection", (reason: any, promise) => {
@@ -361,6 +362,9 @@ app.post("/api/council/detect-language", async (req, res) => {
     }
   }
 });
+
+// Chat routes
+app.use('/api', chatRoutes);
 
 app.get("*", (req, res) => {
   if (req.path.startsWith("/api")) {

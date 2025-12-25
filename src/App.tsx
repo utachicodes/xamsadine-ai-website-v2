@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/auth/AuthContext";
-import { AdminRoute, ProtectedRoute } from "@/auth/ProtectedRoute";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
@@ -12,10 +13,13 @@ import Fatwa from "./pages/Fatwa";
 import Fiqh from "./pages/Fiqh";
 import Language from "./pages/Language";
 import Circle from "./pages/Circle";
+import { CircleKnowledge } from "./pages/admin/CircleKnowledge";
 import AdminConfig from "./pages/AdminConfig";
 import DocumentUpload from "./pages/DocumentUpload";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import AppShell from "./components/layout/AppShell";
+import { ChatInterface } from "@/components/chat/ChatInterface";
+import { AdminDashboard } from "@/pages/admin/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -24,46 +28,71 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <AppShell>
+      <LanguageProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <AppShell>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/fatwa" element={<Fatwa />} />
               <Route path="/fiqh" element={<Fiqh />} />
               <Route path="/language" element={<Language />} />
               <Route
                 path="/circle"
                 element={
+                  <ProtectedRoute adminOnly>
+                    <CircleKnowledge />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chat"
+                element={
                   <ProtectedRoute>
-                    <Circle />
+                    <ChatInterface />
                   </ProtectedRoute>
                 }
               />
               <Route
                 path="/admin"
                 element={
-                  <AdminRoute>
+                  <ProtectedRoute adminOnly>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/config"
+                element={
+                  <ProtectedRoute adminOnly>
                     <AdminConfig />
-                  </AdminRoute>
+                  </ProtectedRoute>
                 }
               />
               <Route
                 path="/documents"
                 element={
-                  <AdminRoute>
+                  <ProtectedRoute adminOnly>
                     <DocumentUpload />
-                  </AdminRoute>
+                  </ProtectedRoute>
                 }
               />
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AppShell>
-        </BrowserRouter>
-      </AuthProvider>
+              </AppShell>
+            </BrowserRouter>
+          </AuthProvider>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Languages, BookMarked } from "lucide-react";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Madhab = "hanafi" | "maliki" | "shafii" | "hanbali";
 
 const Language: React.FC = () => {
-  const [lang, setLang] = React.useState<"wo" | "fr" | "en">("wo");
+  const { language, setLanguage } = useLanguage();
   const [madhab, setMadhab] = React.useState<Madhab>("maliki");
 
   const madhabs: { value: Madhab; label: string; region: string }[] = [
@@ -32,7 +33,7 @@ const Language: React.FC = () => {
             </p>
           </div>
 
-          <LanguageToggle value={lang} onChange={setLang} />
+          <LanguageToggle value={language} onChange={setLanguage} />
         </header>
 
         {/* Language section */}
@@ -113,5 +114,4 @@ const Language: React.FC = () => {
 };
 
 export default Language;
-
 

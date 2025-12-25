@@ -1,70 +1,181 @@
 import * as React from "react";
-import type { Session, User } from "@supabase/supabase-js";
+import type { Session, User, AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
-const ADMIN_EMAIL = "abdoullahaljersi@gmail.com";
+type UserRole = 'user' | 'admin';
+
+type UserProfile = {
+  id: string;
+  email: string;
+  role: UserRole;
+  full_name?: string;
+  avatar_url?: string;
+  created_at: string;
+};
 
 type AuthState = {
   session: Session | null;
-  user: User | null;
+  user: (User & { user_metadata?: { role?: UserRole } }) | null;
+  profile: UserProfile | null;
   isAdmin: boolean;
   loading: boolean;
   signInWithPassword: (params: { email: string; password: string }) => Promise<void>;
+  signUp: (params: { email: string; password: string; fullName: string }) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = React.createContext<AuthState | undefined>(undefined);
 
+// Function to get user role from metadata or email
+const getUserRole = (user: User | null): UserRole => {
+  if (!user) return 'user';
+  // Check if user has admin role in metadata
+  if (user.user_metadata?.role === 'admin') return 'admin';
+  // Fallback to email check (temporary for existing admin)
+  if (user.email === 'abdoullahaljersi@gmail.com') return 'admin';
+  return 'user';
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = React.useState<Session | null>(null);
+  const [profile, setProfile] = React.useState<UserProfile | null>(null);
   const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    let mounted = true;
+  // Fetch user profile from database
+  const fetchUserProfile = React.useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
+      if (error) throw error;
+      return data as UserProfile;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+  }, []);
+
+  // Update auth state when session changes
+  const handleAuthStateChange = React.useCallback(async (event: string, session: Session | null) => {
+    setSession(session);
+    
+    if (session?.user) {
+      const userProfile = await fetchUserProfile(session.user.id);
+      setProfile(userProfile);
+    } else {
+      setProfile(null);
+    }
+    
+    setLoading(false);
+  }, [fetchUserProfile]);
+
+  React.useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session) {
+        const userProfile = await fetchUserProfile(session.user.id);
+        setProfile(userProfile);
+      }
+      setSession(session);
       setLoading(false);
     });
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-    });
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
     return () => {
-      mounted = false;
-      subscription.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchUserProfile, handleAuthStateChange]);
 
   const signInWithPassword = React.useCallback(async ({ email, password }: { email: string; password: string }) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const signUp = React.useCallback(async ({ email, password, fullName }: { email: string; password: string; fullName: string }) => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      // Create user profile in database
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: data.user.id,
+            email,
+            full_name: fullName,
+            role: 'user', // Default role
+            created_at: new Date().toISOString(),
+          });
+
+        if (profileError) throw profileError;
+      }
+
+      return { error: null };
+    } catch (error) {
+      console.error('Signup error:', error);
+      return { error: error as AuthError };
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const signOut = React.useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setProfile(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const user = session?.user ?? null;
-  const isAdmin = (user?.email ?? "").toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = React.useMemo(() => {
+    return getUserRole(session?.user ?? null) === 'admin';
+  }, [session]);
 
-  const value: AuthState = {
-    session,
-    user,
-    isAdmin,
-    loading,
-    signInWithPassword,
-    signOut,
-  };
+  const value = React.useMemo(
+    () => ({
+      session,
+      user: session?.user ?? null,
+      profile,
+      isAdmin,
+      loading,
+      signInWithPassword,
+      signUp,
+      signOut,
+    }),
+    [session, profile, isAdmin, loading, signInWithPassword, signUp, signOut]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = React.useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const context = React.useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }

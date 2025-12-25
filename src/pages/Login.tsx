@@ -2,11 +2,13 @@ import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/auth/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { signInWithPassword } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -19,8 +21,8 @@ const Login: React.FC = () => {
       navigate("/circle");
     } catch (err: any) {
       toast({
-        title: "Login failed",
-        description: err?.message ?? "Could not sign in",
+        title: t('login.failed'),
+        description: err?.message ?? t('login.failed_desc'),
         variant: "destructive",
       });
     } finally {
@@ -31,12 +33,14 @@ const Login: React.FC = () => {
   return (
     <div className="flex-1 min-h-screen flex items-center justify-center bg-islamic-light">
       <div className="w-full max-w-md islamic-card p-8 bg-white/95">
-        <h1 className="text-2xl font-bold text-islamic-dark mb-2">Sign in</h1>
-        <p className="text-sm text-islamic-dark/60 mb-6">Access your account</p>
+        {/* Title */}
+        <h1 className="text-2xl font-bold text-islamic-dark mb-2">{t('login.title')}</h1>
+        <p className="text-sm text-islamic-dark/60 mb-6">{t('login.subtitle')}</p>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-islamic-dark mb-2">Email</label>
+            {/* Email */}
+            <label className="block text-sm font-medium text-islamic-dark mb-2">{t('login.email')}</label>
             <input
               type="email"
               value={email}
@@ -48,7 +52,8 @@ const Login: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-islamic-dark mb-2">Password</label>
+            {/* Password */}
+            <label className="block text-sm font-medium text-islamic-dark mb-2">{t('login.password')}</label>
             <input
               type="password"
               value={password}
@@ -64,7 +69,7 @@ const Login: React.FC = () => {
             disabled={loading}
             className="w-full px-6 py-3 bg-islamic-gold text-white font-semibold rounded-lg disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? t('login.signing_in') : t('login.sign_in')}
           </button>
         </form>
       </div>
@@ -73,3 +78,4 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+

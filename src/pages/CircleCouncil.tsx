@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useLocation } from 'react-router-dom';
@@ -163,20 +164,20 @@ const CirclePage: React.FC = () => {
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <Tabs defaultValue="ask-council" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-4 bg-islamic-cream/30 p-1">
-                        <TabsTrigger value="ask-council" className="flex items-center gap-2">
+                    <TabsList className="grid w-full grid-cols-4 bg-islamic-cream/30 p-1 rounded-md border border-islamic-gold/20">
+                        <TabsTrigger value="ask-council" className="flex items-center gap-2 text-islamic-dark">
                             <Brain className="w-4 h-4" />
                             Ask Council
                         </TabsTrigger>
-                        <TabsTrigger value="members" className="flex items-center gap-2">
+                        <TabsTrigger value="members" className="flex items-center gap-2 text-islamic-dark">
                             <Users className="w-4 h-4" />
                             Members
                         </TabsTrigger>
-                        <TabsTrigger value="documents" className="flex items-center gap-2">
+                        <TabsTrigger value="documents" className="flex items-center gap-2 text-islamic-dark">
                             <FileText className="w-4 h-4" />
                             Knowledge Base
                         </TabsTrigger>
-                        <TabsTrigger value="search" className="flex items-center gap-2">
+                        <TabsTrigger value="search" className="flex items-center gap-2 text-islamic-dark">
                             <Search className="w-4 h-4" />
                             Search RAG
                         </TabsTrigger>
@@ -262,12 +263,11 @@ const CirclePage: React.FC = () => {
                                 )}
 
                                 {!activeResult && !council.isProcessing && (
-                                    <Card className="border-islamic-gold/30 border-dashed">
-                                        <CardContent className="pt-12 pb-12 text-center">
-                                            <Zap className="w-12 h-12 text-islamic-gold/50 mx-auto mb-4" />
-                                            <p className="text-islamic-dark/70">Submit a question to see the Council's analysis</p>
-                                        </CardContent>
-                                    </Card>
+                                    <EmptyState
+                                        title="No analysis yet"
+                                        description="Submit a question to see the Council's analysis"
+                                        icon={Zap}
+                                    />
                                 )}
                             </div>
                         </div>
