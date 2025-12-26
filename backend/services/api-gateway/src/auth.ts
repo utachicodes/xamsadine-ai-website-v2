@@ -3,14 +3,22 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 
 const ADMIN_EMAIL = "abdoullahaljersi@gmail.com";
 
-const supabaseUrl = process.env.SUPABASE_URL;
+// Lazy init variables
+let issuer: string | undefined;
+let jwks: any; // ReturnType<typeof createRemoteJWKSet>
 
-if (!supabaseUrl) {
-  throw new Error("Missing SUPABASE_URL env var (e.g. https://xxxx.supabase.co)");
+function getJWKS() {
+  if (jwks) return { jwks, issuer };
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  if (!supabaseUrl) {
+    throw new Error("Missing SUPABASE_URL env var");
+  }
+
+  issuer = `${supabaseUrl}/auth/v1`;
+  jwks = createRemoteJWKSet(new URL(`${issuer}/.well-known/jwks.json`));
+  return { jwks, issuer };
 }
-
-const issuer = `${supabaseUrl}/auth/v1`;
-const jwks = createRemoteJWKSet(new URL(`${issuer}/.well-known/jwks.json`));
 
 export type AuthUser = {
   sub: string;
@@ -41,6 +49,8 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
+
+    const { jwks, issuer } = getJWKS();
 
     const { payload } = await jwtVerify(token, jwks, {
       issuer,

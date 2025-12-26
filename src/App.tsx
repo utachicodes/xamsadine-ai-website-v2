@@ -20,6 +20,9 @@ import Login from "./pages/auth/Login";
 import AppShell from "./components/layout/AppShell";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
+import MediaPage from "./pages/MediaPage";
+import EventsPage from "./pages/EventsPage";
+import ShopPage from "./pages/ShopPage";
 
 const queryClient = new QueryClient();
 
@@ -29,69 +32,72 @@ const App = () => (
       <Toaster />
       <Sonner />
       <LanguageProvider>
-          <AuthProvider>
-            <BrowserRouter>
-              <AppShell>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/fatwa" element={<Fatwa />} />
-              <Route path="/fiqh" element={<Fiqh />} />
-              <Route path="/language" element={<Language />} />
-              <Route
-                path="/circle"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <CircleKnowledge />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chat"
-                element={
-                  <ProtectedRoute>
-                    <ChatInterface />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/config"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminConfig />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/documents"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <DocumentUpload />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-              </AppShell>
-            </BrowserRouter>
-          </AuthProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppShell>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/fatwa" element={<Fatwa />} />
+                <Route path="/fiqh" element={<Fiqh />} />
+                <Route path="/language" element={<Language />} />
+                <Route
+                  path="/circle"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <CircleKnowledge />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat"
+                  element={
+                    <ProtectedRoute>
+                      <ChatInterface />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/config"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminConfig />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/documents"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <DocumentUpload />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/media" element={<MediaPage />} />
+                <Route path="/events" element={<EventsPage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AppShell>
+          </BrowserRouter>
+        </AuthProvider>
       </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>

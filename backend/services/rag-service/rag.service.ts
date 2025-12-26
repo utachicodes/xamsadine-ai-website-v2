@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { openRouterClient } from './openrouter-client';
-import { logger } from '../../shared/logger';
+import { openRouterClient } from '../llm-service/openrouter-client.ts';
+import { logger } from '../../shared/logger.ts';
 import { createClient } from '@supabase/supabase-js';
 
 export interface Document {

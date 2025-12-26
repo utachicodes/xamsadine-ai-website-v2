@@ -41,6 +41,9 @@ if (existsSync(envPath)) {
 const { postFatwa } = await import("./routes/fatwa.ts");
 const { getDaily } = await import("./routes/daily.ts");
 import chatRoutes from "./chat.js";
+import { videoRoutes } from "../../video-service/src/routes/video.routes.js";
+import { eventRoutes } from "../../event-service/src/routes/event.routes.js";
+import { commerceRoutes } from "../../commerce-service/src/routes/commerce.routes.js"; // Direct import for monolith
 
 // Catch unhandled promise rejections
 process.on("unhandledRejection", (reason: any, promise) => {
@@ -366,7 +369,20 @@ app.post("/api/council/detect-language", async (req, res) => {
 // Chat routes
 app.use('/api', chatRoutes);
 
-app.get("*", (req, res) => {
+// Video Service routes
+app.use('/api/media/video', videoRoutes);
+
+// Event Service routes
+app.use('/api/events', eventRoutes);
+
+// Commerce Service routes
+app.use('/api/shop', commerceRoutes);
+
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.use((req, res) => {
   if (req.path.startsWith("/api")) {
     res.status(404).json({ error: "Not Found" });
     return;
@@ -378,9 +394,6 @@ app.get("*", (req, res) => {
   res.status(404).json({ error: "Not Found" });
 });
 
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
 
 const port = process.env.PORT || 4000;
 
@@ -388,7 +401,7 @@ const server = app.listen(port, async () => {
   try {
     // Start translation service
     await translationServiceManager.start();
-    
+
     console.log(`✅ api-gateway listening on http://localhost:${port}`);
     console.log(`✅ Test: http://localhost:${port}/health`);
   } catch (error: any) {

@@ -17,8 +17,15 @@ class TranslationServiceManager {
   private readonly pythonExecutable: string = 'python';
 
   constructor() {
+    // In ES modules we use import.meta.url to get current directory
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    // On Windows pathname starts with /C:/..., we might need to strip the leading /
+    const cleanDirname = process.platform === 'win32' && __dirname.startsWith('/')
+      ? __dirname.slice(1)
+      : __dirname;
+
     this.translationServicePath = path.join(
-      __dirname,
+      cleanDirname,
       '../../translation-service'
     );
   }

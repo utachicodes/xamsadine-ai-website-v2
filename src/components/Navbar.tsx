@@ -13,18 +13,24 @@ const Navbar = () => {
   const navItems = user
     ? isAdmin
       ? [
-          { title: t('nav.daily'), href: '/dashboard' },
-          { title: t('nav.chat'), href: '/chat' },
-          { title: t('nav.circle'), href: '/circle' },
-          { title: t('nav.admin'), href: '/admin' },
-          { title: t('nav.documents'), href: '/documents' },
-          { title: t('nav.settings'), href: '/language' },
-        ]
+        { title: t('nav.daily'), href: '/dashboard' },
+        { title: t('nav.chat'), href: '/chat' },
+        { title: 'Videos', href: '/media' },
+        { title: 'Events', href: '/events' },
+        { title: 'Shop', href: '/shop' },
+        { title: t('nav.circle'), href: '/circle' },
+        { title: t('nav.admin'), href: '/admin' },
+        { title: t('nav.documents'), href: '/documents' },
+        { title: t('nav.settings'), href: '/language' },
+      ]
       : [
-          { title: t('nav.daily'), href: '/dashboard' },
-          { title: t('nav.chat'), href: '/chat' },
-          { title: t('nav.settings'), href: '/language' },
-        ]
+        { title: t('nav.daily'), href: '/dashboard' },
+        { title: t('nav.chat'), href: '/chat' },
+        { title: 'Videos', href: '/media' },
+        { title: 'Events', href: '/events' },
+        { title: 'Shop', href: '/shop' },
+        { title: t('nav.settings'), href: '/language' },
+      ]
     : location.pathname === '/login'
       ? []
       : [{ title: t('nav.signin'), href: '/login' }];
