@@ -56,8 +56,18 @@ process.on("uncaughtException", (error) => {
 });
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// Security: Configure CORS properly
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || process.env.VITE_API_URL || 'http://localhost:8080',
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+
+// Security: Limit request body size
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve frontend build (Vite dist/) from the project root
 const distPath = path.join(projectRoot, "dist");

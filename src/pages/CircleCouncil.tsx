@@ -19,7 +19,7 @@ import {
     FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useCouncil, ConsensusResult, Document } from '@/hooks/use-council';
+import { useCouncil, ConsensusResult, Document, RAGResult } from '@/hooks/use-council';
 import {
     CouncilQueryForm,
     CouncilMembersDisplay,
@@ -35,7 +35,7 @@ const CirclePage: React.FC = () => {
     const [activeResult, setActiveResult] = React.useState<ConsensusResult | null>(null);
     const [showDocumentForm, setShowDocumentForm] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState('');
-    const [searchResults, setSearchResults] = React.useState<any>(null);
+    const [searchResults, setSearchResults] = React.useState<RAGResult | null>(null);
 
     const askNowQuery = React.useMemo(() => {
         const params = new URLSearchParams(location.search);
@@ -66,16 +66,23 @@ const CirclePage: React.FC = () => {
                 description: 'The Council has provided their analysis.',
                 variant: 'default'
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to get council response';
             toast({
                 title: 'Error',
-                description: error.message || 'Failed to get council response',
+                description: message,
                 variant: 'destructive'
             });
         }
     };
 
-    const handleUploadDocument = async (doc: any) => {
+    const handleUploadDocument = async (doc: {
+        docId: string;
+        title: string;
+        content: string;
+        source: string;
+        category?: string;
+    }) => {
         try {
             await council.uploadDocument(doc);
             setShowDocumentForm(false);
@@ -84,10 +91,11 @@ const CirclePage: React.FC = () => {
                 description: 'Document uploaded and indexed successfully.',
                 variant: 'default'
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to upload document';
             toast({
                 title: 'Error',
-                description: error.message || 'Failed to upload document',
+                description: message,
                 variant: 'destructive'
             });
         }
@@ -106,10 +114,11 @@ const CirclePage: React.FC = () => {
         try {
             const results = await council.searchRAG({ query: searchQuery });
             setSearchResults(results);
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Search failed';
             toast({
                 title: 'Error',
-                description: error.message || 'Search failed',
+                description: message,
                 variant: 'destructive'
             });
         }
@@ -123,10 +132,11 @@ const CirclePage: React.FC = () => {
                 description: 'Document deleted successfully.',
                 variant: 'default'
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to delete document';
             toast({
                 title: 'Error',
-                description: error.message || 'Failed to delete document',
+                description: message,
                 variant: 'destructive'
             });
         }
@@ -477,7 +487,7 @@ const CirclePage: React.FC = () => {
                                             <div>
                                                 <h4 className="font-semibold text-islamic-dark text-sm mb-2">Sources</h4>
                                                 <div className="space-y-2">
-                                                    {searchResults.sources.map((source: any, idx: number) => (
+                                                    {searchResults.sources.map((source, idx: number) => (
                                                         <div key={idx} className="p-2 bg-islamic-cream/30 rounded text-sm">
                                                             <p className="font-medium text-islamic-dark">{source.title}</p>
                                                             <p className="text-islamic-dark/70 text-xs">{source.source}</p>

@@ -6,14 +6,15 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/auth/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Sparkles, ShieldCheck } from 'lucide-react';
+import { LogIn, UserPlus, Sparkles } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-  const { signInWithPassword, signUpWithPassword } = useAuth();
+  const { signInWithPassword, signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -24,7 +25,19 @@ const Login = () => {
 
     try {
       if (isSignUp) {
-        await signUpWithPassword({ email, password });
+        if (!fullName.trim()) {
+          toast({
+            title: t('common.error'),
+            description: t('login.full_name_required') || 'Full name is required',
+            variant: 'destructive',
+          });
+          setIsLoading(false);
+          return;
+        }
+        const result = await signUp({ email, password, fullName: fullName.trim() });
+        if (result.error) {
+          throw result.error;
+        }
         toast({
           title: t('common.success'),
           description: t('login.success_signed_up'),
@@ -104,6 +117,26 @@ const Login = () => {
           transition={{ duration: 0.5, delay: 0.05 }}
           className="max-w-xl mx-auto mt-10 space-y-6"
         >
+          {isSignUp && (
+            <div>
+              <label htmlFor="full-name" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('login.full_name') || 'Full Name'}
+              </label>
+              <Input
+                id="full-name"
+                name="fullName"
+                type="text"
+                autoComplete="name"
+                required={isSignUp}
+                aria-required={isSignUp}
+                className="w-full px-4 py-3 border-gray-300 rounded-lg focus:ring-islamic-primary-green focus:border-islamic-primary-green"
+                placeholder={t('login.full_name_placeholder') || 'John Doe'}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                aria-label="Full name"
+              />
+            </div>
+          )}
           <div>
             <label htmlFor="email-address" className="block text-sm font-medium text-gray-700 mb-1">
               {t('login.email')}
@@ -130,10 +163,12 @@ const Login = () => {
               type="password"
               autoComplete={isSignUp ? 'new-password' : 'current-password'}
               required
+              aria-required="true"
               className="w-full px-4 py-3 border-gray-300 rounded-lg focus:ring-islamic-primary-green focus:border-islamic-primary-green"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-label="Password"
             />
           </div>
 

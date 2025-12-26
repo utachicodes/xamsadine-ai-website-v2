@@ -16,8 +16,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-islamic-primary-green"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50" role="status" aria-label="Loading">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-islamic-primary-green" aria-hidden="true"></div>
+        <span className="sr-only">Loading...</span>
       </div>
     );
   }

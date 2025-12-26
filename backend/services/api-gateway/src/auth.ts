@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 
-const ADMIN_EMAIL = "abdoullahaljersi@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "abdoullahaljersi@gmail.com";
 
 // Lazy init variables
 let issuer: string | undefined;

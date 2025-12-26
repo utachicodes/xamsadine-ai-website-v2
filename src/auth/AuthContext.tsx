@@ -27,12 +27,16 @@ type AuthState = {
 const AuthContext = React.createContext<AuthState | undefined>(undefined);
 
 // Function to get user role from metadata or email
-const getUserRole = (user: User | null): UserRole => {
+const getUserRole = (user: User | null, profile: UserProfile | null): UserRole => {
   if (!user) return 'user';
+  // Check profile role first (most reliable)
+  if (profile?.role === 'admin') return 'admin';
   // Check if user has admin role in metadata
   if (user.user_metadata?.role === 'admin') return 'admin';
-  // Fallback to email check (temporary for existing admin)
-  if (user.email === 'abdoullahaljersi@gmail.com') return 'admin';
+  // Fallback to email check (for backward compatibility)
+  // Note: This should be removed in favor of profile-based roles
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+  if (adminEmail && user.email === adminEmail) return 'admin';
   return 'user';
 };
 
@@ -53,7 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       return data as UserProfile;
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      // Error is handled gracefully, no need to log in production
+      if (import.meta.env.DEV) {
+        console.error('Error fetching user profile:', error);
+      }
       return null;
     }
   }, []);
@@ -133,7 +140,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { error: null };
     } catch (error) {
-      console.error('Signup error:', error);
+      // Error is returned to caller, no need to log here
+      if (import.meta.env.DEV) {
+        console.error('Signup error:', error);
+      }
       return { error: error as AuthError };
     } finally {
       setLoading(false);
@@ -152,8 +162,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const isAdmin = React.useMemo(() => {
-    return getUserRole(session?.user ?? null) === 'admin';
-  }, [session]);
+    return getUserRole(session?.user ?? null, profile) === 'admin';
+  }, [session, profile]);
 
   const value = React.useMemo(
     () => ({

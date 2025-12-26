@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { FatwaSession } from "../../../../shared/schemas/fatwa.ts";
 import { OllamaClient } from "../clients/ollamaClient.ts";
+import { ragService } from "../../rag-service/rag.service.ts";
 
 // Lazy-load Ollama client
 function getOllamaClient(): OllamaClient | null {
@@ -18,20 +19,64 @@ function getOllamaClient(): OllamaClient | null {
   }
 }
 
+// Input validation helper
+function validateFatwaInput(body: unknown): {
+  question: string;
+  language: FatwaSession["language"];
+  madhab?: "hanafi" | "maliki" | "shafii" | "hanbali";
+} {
+  if (!body || typeof body !== 'object') {
+    throw new Error('Invalid request body');
+  }
+
+  const { question, language, madhab } = body as Record<string, unknown>;
+
+  if (!question || typeof question !== 'string') {
+    throw new Error('Question is required and must be a string');
+  }
+
+  // Sanitize and validate question length
+  const sanitizedQuestion = question.trim();
+  if (sanitizedQuestion.length === 0) {
+    throw new Error('Question cannot be empty');
+  }
+  if (sanitizedQuestion.length > 2000) {
+    throw new Error('Question is too long (max 2000 characters)');
+  }
+
+  // Validate language
+  const validLanguages: FatwaSession["language"][] = ['fr', 'en', 'wo'];
+  const validatedLanguage = (language && validLanguages.includes(language as FatwaSession["language"]))
+    ? (language as FatwaSession["language"])
+    : 'fr';
+
+  // Validate madhab
+  const validMadhabs = ['hanafi', 'maliki', 'shafii', 'hanbali'] as const;
+  const validatedMadhab = (madhab && validMadhabs.includes(madhab as typeof validMadhabs[number]))
+    ? (madhab as typeof validMadhabs[number])
+    : undefined;
+
+  return {
+    question: sanitizedQuestion,
+    language: validatedLanguage,
+    madhab: validatedMadhab,
+  };
+}
+
 export async function postFatwa(req: Request, res: Response) {
   try {
     console.log("📥 Received fatwa request");
-    const { question, language, madhab } = req.body as {
-      question: string;
-      language: FatwaSession["language"];
-      madhab?: "hanafi" | "maliki" | "shafii" | "hanbali";
-    };
-
-    if (!question) {
-      console.log("❌ Missing question in request");
-      return res.status(400).json({ error: "Missing question" });
+    
+    // Validate and sanitize input
+    let validatedInput;
+    try {
+      validatedInput = validateFatwaInput(req.body);
+    } catch (validationError: unknown) {
+      const message = validationError instanceof Error ? validationError.message : 'Invalid input';
+      return res.status(400).json({ error: message });
     }
 
+    const { question, language, madhab } = validatedInput;
     console.log("✅ Question received:", question.substring(0, 50) + "...");
 
     const chosenMadhab = madhab || "maliki";
@@ -67,9 +112,24 @@ export async function postFatwa(req: Request, res: Response) {
           });
         }
 
-        console.log("🔄 Step 2: Generating fatwa with Ollama...");
-        // 2) Generate fatwa with Ollama
-        const contextTexts: string[] = []; // TODO: call vector/rag service and fetch relevant passages.
+        console.log("🔄 Step 2: Retrieving relevant context from RAG...");
+        // 2) Retrieve relevant context using RAG
+        let contextTexts: string[] = [];
+        try {
+          const ragResult = await ragService.search(question, 5);
+          if (ragResult.context) {
+            contextTexts = [ragResult.context];
+            console.log(`   Found ${ragResult.sources.length} relevant sources`);
+          } else {
+            console.log("   No relevant context found in knowledge base");
+          }
+        } catch (ragError: any) {
+          console.warn("   RAG search failed, continuing without context:", ragError?.message);
+          // Continue without RAG context if search fails
+        }
+
+        console.log("🔄 Step 3: Generating fatwa with Ollama...");
+        // 3) Generate fatwa with Ollama using retrieved context
         const raw = await ollama.generateGuidedFatwa(session, contextTexts, chosenMadhab);
         console.log("✅ Ollama response received (length:", raw.length, ")");
 

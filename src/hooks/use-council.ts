@@ -25,7 +25,12 @@ export interface ConsensusResult {
     query: string;
     councilMembers: CouncilMember[];
     initialResponses: MemberResponse[];
-    peerReviews: any[];
+    peerReviews: Array<{
+        reviewerId: string;
+        revieweeId: string;
+        agreement: number;
+        comments: string;
+    }>;
     synthesisResult: string;
     consensusScore: number;
     executionTime: number;

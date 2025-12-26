@@ -46,8 +46,9 @@ export default function ShopPage() {
                 setCart([]);
             }, 1000);
 
-        } catch (error: any) {
-            toast.error(error.message || "Checkout failed");
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Checkout failed";
+            toast.error(message);
         }
     };
 

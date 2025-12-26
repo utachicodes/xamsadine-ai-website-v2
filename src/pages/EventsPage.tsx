@@ -31,8 +31,9 @@ export default function EventsPage() {
         try {
             await EcosystemService.registerForEvent(eventId);
             toast.success("Successfully registered for event!");
-        } catch (error: any) {
-            toast.error(error.message || "Registration failed");
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Registration failed";
+            toast.error(message);
         }
     };
 

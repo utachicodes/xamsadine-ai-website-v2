@@ -1,7 +1,9 @@
 import { apiFetch } from '@/lib/api';
 import { MediaContent, Event, Product, Order } from '@/types/ecosystem';
 
-const API_BASE = 'http://localhost:4000/api'; // In prod this should be env var
+const API_BASE = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : 'http://localhost:4000/api';
 
 export const EcosystemService = {
     // --- MEDIA ---
