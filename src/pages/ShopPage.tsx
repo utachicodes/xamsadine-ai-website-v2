@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { EcosystemService } from '@/services/ecosystem';
 import { Product } from '@/types/ecosystem';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { MOCK_PRODUCTS } from '@/lib/mock-data';
 
 export default function ShopPage() {
+    const { t } = useLanguage();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [cart, setCart] = useState<{ product: Product, quantity: number }[]>([]);
@@ -20,9 +22,11 @@ export default function ShopPage() {
         setLoading(true);
         try {
             const data = await EcosystemService.getProducts();
-            setProducts(data);
+            setProducts(data.length > 0 ? data : MOCK_PRODUCTS);
         } catch (error) {
-            toast.error("Failed to load products");
+            // Use mock data for now
+            console.warn('Using mock products data');
+            setProducts(MOCK_PRODUCTS);
         } finally {
             setLoading(false);
         }
@@ -53,57 +57,69 @@ export default function ShopPage() {
     };
 
     return (
-        <div className="container mx-auto py-8">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-teal-600">
-                        XamSaDine Store
-                    </h1>
-                    <p className="text-muted-foreground mt-2">
-                        Halal streetwear, books, and accessories.
-                    </p>
-                </div>
+        <div className="flex-1">
+            <section className="container py-10 md:py-16 space-y-10">
+                <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <p className="inline-flex items-center text-xs uppercase tracking-[0.22em] text-islamic-dark/60 mb-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-islamic-gold mr-2" />
+                            {t('shop.title')}
+                        </p>
+                        <h1 className="text-3xl md:text-4xl font-bold text-islamic-dark">
+                            {t('shop.subtitle')}
+                        </h1>
+                        <p className="mt-2 text-islamic-dark/70 max-w-xl">
+                            {t('shop.intro')}
+                        </p>
+                    </div>
 
-                <Button variant="outline" className="relative" onClick={handleCheckout}>
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    Cart
-                    {cart.length > 0 && (
-                        <Badge className="absolute -top-2 -right-2 px-2 py-0.5" variant="destructive">
-                            {cart.length}
-                        </Badge>
-                    )}
-                </Button>
-            </div>
+                    <Button variant="outline" className="relative border-islamic-gold/30 hover:border-islamic-gold" onClick={handleCheckout}>
+                        <ShoppingCart className="mr-2 h-5 w-5" />
+                        Cart
+                        {cart.length > 0 && (
+                            <Badge className="absolute -top-2 -right-2 px-2 py-0.5 bg-islamic-green text-white">
+                                {cart.length}
+                            </Badge>
+                        )}
+                    </Button>
+                </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {loading ? (
-                    <p>Loading products...</p>
-                ) : products.map((product) => (
-                    <Card key={product.id} className="group overflow-hidden">
-                        <div className="aspect-square bg-slate-100 dark:bg-slate-800 relative">
-                            {product.images && product.images[0] ? (
-                                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="flex items-center justify-center h-full text-slate-400">
-                                    <Tag size={48} />
-                                </div>
-                            )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {loading ? (
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-islamic-dark/70">{t('shop.loading')}</p>
                         </div>
-                        <CardHeader>
-                            <CardTitle className="text-lg">{product.name}</CardTitle>
-                            <p className="text-sm font-bold text-primary">{product.price.toLocaleString()} {product.currency}</p>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
-                        </CardContent>
-                        <CardFooter>
-                            <Button className="w-full" onClick={() => addToCart(product)} disabled={product.stock_quantity === 0}>
-                                {product.stock_quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
-            </div>
+                    ) : products.length === 0 ? (
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-islamic-dark/70">{t('shop.empty')}</p>
+                        </div>
+                    ) : products.map((product) => (
+                        <div key={product.id} className="islamic-card group overflow-hidden hover:scale-[1.02] transition-transform">
+                            <div className="aspect-square bg-islamic-cream/30 relative overflow-hidden rounded-t-lg">
+                                {product.images && product.images[0] ? (
+                                    <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="flex items-center justify-center h-full text-islamic-dark/40">
+                                        <Tag size={48} />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="p-6 space-y-3">
+                                <h3 className="text-lg font-semibold text-islamic-dark">{product.name}</h3>
+                                <p className="text-lg font-bold text-islamic-gold">{product.price.toLocaleString()} {product.currency}</p>
+                                <p className="text-sm text-islamic-dark/70 line-clamp-2">{product.description}</p>
+                                <Button 
+                                    className="w-full btn-islamic" 
+                                    onClick={() => addToCart(product)} 
+                                    disabled={product.stock_quantity === 0}
+                                >
+                                    {product.stock_quantity > 0 ? t('shop.add_to_cart') : t('shop.out_of_stock')}
+                                </Button>
+                            </div>
+                        </div>
+                )                )}
+                </div>
+            </section>
         </div>
     );
 }

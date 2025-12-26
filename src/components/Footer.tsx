@@ -11,7 +11,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div>
             <div className="mb-4">
-              <span className="font-bold text-xl text-islamic-gold">XamSaDine AI</span>
+              <img 
+                src="/logo.png" 
+                alt="XamSaDine AI" 
+                className="h-12 w-auto object-contain brightness-0 invert"
+              />
             </div>
             <p className="text-white/70 mb-4">
               {t('footer.description')}
@@ -27,11 +31,8 @@ const Footer = () => {
               </li>
               <li className="flex items-start">
                 <Mail className="w-5 h-5 text-islamic-gold mr-3 mt-1" />
-                <span className="text-white/70">xamsadineacademy@gmail.com</span>
-              </li>
-              <li>
-                <a href="/login" className="inline-block btn-islamic mt-2">
-                  {t('nav.daily')}
+                <a href="mailto:xamsadineai@gmail.com" className="text-white/70 hover:text-islamic-gold transition-colors">
+                  xamsadineai@gmail.com
                 </a>
               </li>
             </ul>

@@ -72,14 +72,6 @@ const Login = () => {
 
       <div className="container relative z-10 py-16">
         <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-islamic-primary-green to-islamic-primary-gold flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-islamic-primary-green to-islamic-primary-gold">
-              XamSaDine AI
-            </div>
-          </div>
           <div className="flex justify-center gap-2 mb-8">
             <button
               type="button"
@@ -130,7 +122,6 @@ const Login = () => {
                 required={isSignUp}
                 aria-required={isSignUp}
                 className="w-full px-4 py-3 border-gray-300 rounded-lg focus:ring-islamic-primary-green focus:border-islamic-primary-green"
-                placeholder={t('login.full_name_placeholder') || 'John Doe'}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 aria-label="Full name"
@@ -147,10 +138,11 @@ const Login = () => {
               type="email"
               autoComplete="email"
               required
+              aria-required="true"
               className="w-full px-4 py-3 border-gray-300 rounded-lg focus:ring-islamic-primary-green focus:border-islamic-primary-green"
-              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email address"
             />
           </div>
           <div>
@@ -165,7 +157,6 @@ const Login = () => {
               required
               aria-required="true"
               className="w-full px-4 py-3 border-gray-300 rounded-lg focus:ring-islamic-primary-green focus:border-islamic-primary-green"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               aria-label="Password"
@@ -209,17 +200,6 @@ const Login = () => {
               <span>{isSignUp ? t('login.sign_up') : t('login.sign_in')}</span>
             )}
           </Button>
-
-          <p className="text-sm text-center text-gray-600">
-            {isSignUp ? t('login.toggle_have_account') : t('login.toggle_no_account')}{' '}
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="font-medium text-islamic-primary-green hover:text-islamic-primary-gold"
-            >
-              {isSignUp ? t('login.sign_in') : t('login.sign_up')}
-            </button>
-          </p>
         </motion.form>
       </div>
 

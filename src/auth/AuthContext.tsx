@@ -70,8 +70,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(session);
     
     if (session?.user) {
-      const userProfile = await fetchUserProfile(session.user.id);
-      setProfile(userProfile);
+      try {
+        const userProfile = await fetchUserProfile(session.user.id);
+        setProfile(userProfile);
+      } catch (error) {
+        console.error('Error fetching profile in auth state change:', error);
+        // Continue even if profile fetch fails
+        setProfile(null);
+      }
     } else {
       setProfile(null);
     }
@@ -80,20 +86,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchUserProfile]);
 
   React.useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        const userProfile = await fetchUserProfile(session.user.id);
-        setProfile(userProfile);
-      }
-      setSession(session);
-      setLoading(false);
-    });
+    let mounted = true;
+    
+    // Get initial session with error handling
+    supabase.auth.getSession()
+      .then(async ({ data: { session }, error }) => {
+        if (!mounted) return;
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          setLoading(false);
+          return;
+        }
+        
+        if (session) {
+          try {
+            const userProfile = await fetchUserProfile(session.user.id);
+            if (mounted) {
+              setProfile(userProfile);
+            }
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+            // Continue even if profile fetch fails
+          }
+        }
+        
+        if (mounted) {
+          setSession(session);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Unexpected error in getSession:', error);
+        if (mounted) {
+          setLoading(false);
+        }
+      });
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
+    // Safety timeout - ensure loading is set to false after 5 seconds
+    const timeout = setTimeout(() => {
+      if (mounted) {
+        console.warn('Auth loading timeout - setting loading to false');
+        setLoading(false);
+      }
+    }, 5000);
+
     return () => {
+      mounted = false;
+      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, [fetchUserProfile, handleAuthStateChange]);

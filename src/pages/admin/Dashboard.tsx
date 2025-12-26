@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, MessageSquare, FileText, Settings, Activity } from 'lucide-react';
+import { Users, MessageSquare, FileText, Settings, Activity, Calendar, Video, ShoppingBag, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/auth/AuthContext';
@@ -139,7 +139,7 @@ export const AdminDashboard = () => {
               <Button
                 variant="islamicOutline"
                 className="w-full justify-start"
-                onClick={() => navigate('/admin')}
+                onClick={() => navigate('/admin/config')}
               >
                 <Settings className="mr-2 h-4 w-4" />
                 Configure AI Models
@@ -151,6 +151,30 @@ export const AdminDashboard = () => {
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Manage Documents
+              </Button>
+              <Button
+                variant="islamicOutline"
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/events')}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                Manage Events
+              </Button>
+              <Button
+                variant="islamicOutline"
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/videos')}
+              >
+                <Video className="mr-2 h-4 w-4" />
+                Manage Videos
+              </Button>
+              <Button
+                variant="islamicOutline"
+                className="w-full justify-start"
+                onClick={() => navigate('/admin/products')}
+              >
+                <ShoppingBag className="mr-2 h-4 w-4" />
+                Manage Products
               </Button>
               <Button
                 variant="islamicOutline"
@@ -205,7 +229,7 @@ export const AdminDashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {[
-                { user: 'user@example.com', action: 'Asked about prayer times', time: '2 min ago' },
+                { user: 'amadou.diop@xamsadine.sn', action: 'Asked about prayer times', time: '2 min ago' },
                 { user: 'admin@xamsadine.ai', action: 'Uploaded new document', time: '15 min ago' },
                 { user: 'student@islam.edu', action: 'Queried about Zakat', time: '1 hour ago' },
                 { user: 'scholar@islamic.org', action: 'Updated AI model config', time: '2 hours ago' },

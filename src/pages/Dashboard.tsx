@@ -293,12 +293,52 @@ const Dashboard: React.FC = () => {
     null,
   );
   const [submitted, setSubmitted] = React.useState(false);
-  const [loadingDaily] = React.useState(false);
+  const [loadingDaily, setLoadingDaily] = React.useState(true);
+  const [daily, setDaily] = React.useState<DailyData | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const daily = MOCK_DAILY_BY_LANG[language];
   const t = uiText[language];
   const quiz = quizByLanguage[language][difficulty];
   const isCorrect = submitted && selectedOption === quiz.correct;
+
+  React.useEffect(() => {
+    const fetchDaily = async () => {
+      setLoadingDaily(true);
+      setError(null);
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${apiUrl}/api/daily`);
+        if (!response.ok) throw new Error('Failed to fetch daily content');
+        const data = await response.json();
+        
+        // Map API response to DailyData format
+        const mappedData: DailyData = {
+          gregorianDate: data.gregorianDate,
+          hijriDate: data.hijriDate,
+          ayah: {
+            reference: data.ayah.reference,
+            arabic: data.ayah.arabic,
+            translation: data.ayah.translation,
+          },
+          dua: {
+            arabic: data.dua.arabic,
+            translation: data.dua.translation,
+          },
+          fact: data.fact,
+        };
+        setDaily(mappedData);
+      } catch (err) {
+        console.error('Error fetching daily content:', err);
+        setError('Failed to load daily content');
+        // Fallback to mock data
+        setDaily(MOCK_DAILY_BY_LANG[language]);
+      } finally {
+        setLoadingDaily(false);
+      }
+    };
+
+    fetchDaily();
+  }, [language]);
 
   return (
     <div className="flex-1">
@@ -321,94 +361,127 @@ const Dashboard: React.FC = () => {
 
         <div className="grid gap-6 md:grid-cols-3">
           {/* Ayah / reminder */}
-          <div className="islamic-card col-span-2 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-islamic-green/10 via-islamic-blue/5 to-islamic-gold/10" />
-            <div className="relative p-6 h-full flex flex-col justify-between space-y-4">
+          <div className="islamic-card col-span-2 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-islamic-green/10 via-islamic-blue/5 to-islamic-gold/10 opacity-80 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-islamic-gold/5 rounded-full blur-3xl -translate-y-16 translate-x-16" />
+            <div className="relative p-8 h-full flex flex-col justify-between space-y-6">
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-1">
+                  <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-1 font-semibold">
                     {t.ayahOfTheDay}
                   </p>
-                  <p className="text-sm text-islamic-dark/70">
-                    {daily?.ayah.reference ?? t.loading}
+                  <p className="text-sm text-islamic-dark/70 font-medium">
+                    {daily?.ayah.reference ?? (loadingDaily ? t.loading : "")}
                   </p>
                 </div>
-                <Sparkles className="w-5 h-5 text-islamic-gold" />
+                <div className="p-2 bg-islamic-gold/10 rounded-lg">
+                  <Sparkles className="w-5 h-5 text-islamic-gold" />
+                </div>
               </div>
 
-              <p className="font-arabic text-2xl leading-relaxed text-islamic-dark/90 min-h-[3rem]">
-                {daily?.ayah.arabic ?? (loadingDaily ? "…" : "")}
-              </p>
+              <div className="space-y-4">
+                <p className="font-arabic text-3xl md:text-4xl leading-relaxed text-islamic-dark/95 min-h-[4rem] text-right">
+                  {daily?.ayah.arabic ?? (loadingDaily ? "…" : "")}
+                </p>
 
-              <p className="text-sm text-islamic-dark/80">
-                {daily?.ayah.translation ??
-                  (loadingDaily ? t.ayahLoading : t.ayahError)}
-              </p>
+                <div className="h-px bg-gradient-to-r from-transparent via-islamic-gold/30 to-transparent" />
+
+                <p className="text-base text-islamic-dark/85 leading-relaxed italic">
+                  {daily?.ayah.translation ??
+                    (loadingDaily ? t.ayahLoading : t.ayahError)}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Today summary */}
-          <div className="islamic-card p-6 flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-1">
-                  {t.todayLabel}
-                </p>
-                <p className="font-medium text-islamic-dark">
-                  {daily?.hijriDate ?? "Hijri date (connect API)"}
-                </p>
+          <div className="islamic-card p-6 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-islamic-blue/5 to-islamic-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-2 font-semibold">
+                    {t.todayLabel}
+                  </p>
+                  <p className="font-semibold text-islamic-dark text-lg">
+                    {daily?.gregorianDate ? new Date(daily.gregorianDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'wo' ? 'wo-SN' : 'en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    }) : ""}
+                  </p>
+                  <p className="font-medium text-islamic-dark/80 mt-1 text-sm">
+                    {daily?.hijriDate ?? (loadingDaily ? t.loading : "")}
+                  </p>
+                </div>
+                <div className="flex gap-2 text-islamic-gold">
+                  <div className="p-2 bg-islamic-gold/10 rounded-lg">
+                    <Sun className="w-5 h-5" />
+                  </div>
+                  <div className="p-2 bg-islamic-blue/10 rounded-lg">
+                    <MoonStar className="w-5 h-5" />
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-2 text-islamic-gold">
-                <Sun className="w-5 h-5" />
-                <MoonStar className="w-5 h-5" />
-              </div>
+              <p className="text-sm text-islamic-dark/70 mb-4 leading-relaxed">
+                {t.todaySummary}
+              </p>
+              <button className="btn-islamic w-full hover:scale-[1.02] transition-transform">
+                {t.openReminder}
+              </button>
             </div>
-            <p className="text-sm text-islamic-dark/70 mb-3">
-              {t.todaySummary}
-            </p>
-            <button className="btn-islamic w-full">
-              {t.openReminder}
-            </button>
           </div>
         </div>
 
         {/* Duas, facts, quiz */}
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="islamic-card p-6 space-y-3">
-            <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60">
-              {t.dailyDua}
-            </p>
-            <p className="font-arabic text-xl text-islamic-dark/90">
-              {daily?.dua.arabic ?? "…"}
-            </p>
-            <p className="text-xs text-islamic-dark/70">
-              {daily?.dua.translation ??
-                (loadingDaily ? t.dailyDuaLoading : t.dailyDuaError)}
-            </p>
-          </div>
-
-          <div className="islamic-card p-6 space-y-3">
-            <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60">
-              {t.smallFact}
-            </p>
-            <p className="text-sm text-islamic-dark/80">
-              {daily?.fact ??
-                (loadingDaily ? t.factLoading : t.factError)}
-            </p>
-          </div>
-
-          <div className="islamic-card p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60">
-                  {t.weeklyQuiz}
-                </p>
-                <p className="text-sm text-islamic-dark/80">
-                  {t.weeklyQuizSubtitle}
-                </p>
-              </div>
-              <HelpCircle className="w-5 h-5 text-islamic-gold" />
+          <div className="islamic-card p-6 space-y-4 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-islamic-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-3 font-semibold">
+                {t.dailyDua}
+              </p>
+              <p className="font-arabic text-2xl text-islamic-dark/95 mb-3 text-right leading-relaxed">
+                {daily?.dua.arabic ?? (loadingDaily ? "…" : "")}
+              </p>
+              <div className="h-px bg-gradient-to-r from-transparent via-islamic-green/20 to-transparent mb-3" />
+              <p className="text-sm text-islamic-dark/80 leading-relaxed">
+                {daily?.dua.translation ??
+                  (loadingDaily ? t.dailyDuaLoading : t.dailyDuaError)}
+              </p>
             </div>
+          </div>
+
+          <div className="islamic-card p-6 space-y-3 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-islamic-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-3 font-semibold">
+                {t.smallFact}
+              </p>
+              <p className="text-sm text-islamic-dark/80 leading-relaxed">
+                {daily?.fact ??
+                  (loadingDaily ? t.factLoading : t.factError)}
+              </p>
+            </div>
+          </div>
+
+          <div className="islamic-card p-6 space-y-4 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-islamic-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 font-semibold">
+                    {t.weeklyQuiz}
+                  </p>
+                  <p className="text-sm text-islamic-dark/80 mt-1">
+                    {t.weeklyQuizSubtitle}
+                  </p>
+                </div>
+                <div className="p-2 bg-islamic-gold/10 rounded-lg">
+                  <HelpCircle className="w-5 h-5 text-islamic-gold" />
+                </div>
+              </div>
             <div className="flex flex-wrap gap-2 text-xs mb-2">
               <button
                 type="button"
@@ -512,6 +585,7 @@ const Dashboard: React.FC = () => {
                   : `${t.wrongFeedbackPrefix}${quiz.hint}`}
               </p>
             )}
+            </div>
           </div>
         </div>
       </section>

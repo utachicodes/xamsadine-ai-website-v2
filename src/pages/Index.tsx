@@ -3,11 +3,10 @@ import HeroSection from '@/components/HeroSection';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Calendar, BookOpen, Sparkles, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/auth/AuthContext';
 
 const Index = () => {
   const { t } = useLanguage();
-  const { user } = useAuth();
+
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
@@ -38,7 +37,7 @@ const Index = () => {
                   </span>
                 </Link>
 
-                <Link to={user ? "/dashboard" : "/login"} className="islamic-card p-6 hover:scale-105 transition-transform">
+                <Link to="/dashboard" className="islamic-card p-6 hover:scale-105 transition-transform">
                   <div className="w-12 h-12 rounded-full bg-islamic-blue/10 flex items-center justify-center mb-4">
                     <Calendar className="w-6 h-6 text-islamic-blue" />
                   </div>
@@ -49,7 +48,7 @@ const Index = () => {
                   </span>
                 </Link>
 
-                <Link to={user ? "/fiqh" : "/login"} className="islamic-card p-6 hover:scale-105 transition-transform">
+                <Link to="/fiqh" className="islamic-card p-6 hover:scale-105 transition-transform">
                   <div className="w-12 h-12 rounded-full bg-islamic-gold/10 flex items-center justify-center mb-4">
                     <BookOpen className="w-6 h-6 text-islamic-gold" />
                   </div>

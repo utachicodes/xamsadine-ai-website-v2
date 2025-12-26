@@ -13,24 +13,11 @@ const Navbar = () => {
   const navItems = user
     ? isAdmin
       ? [
-        { title: t('nav.daily'), href: '/dashboard' },
-        { title: t('nav.chat'), href: '/chat' },
-        { title: 'Videos', href: '/media' },
-        { title: 'Events', href: '/events' },
-        { title: 'Shop', href: '/shop' },
         { title: t('nav.circle'), href: '/circle' },
         { title: t('nav.admin'), href: '/admin' },
         { title: t('nav.documents'), href: '/documents' },
-        { title: t('nav.settings'), href: '/language' },
       ]
-      : [
-        { title: t('nav.daily'), href: '/dashboard' },
-        { title: t('nav.chat'), href: '/chat' },
-        { title: 'Videos', href: '/media' },
-        { title: 'Events', href: '/events' },
-        { title: 'Shop', href: '/shop' },
-        { title: t('nav.settings'), href: '/language' },
-      ]
+      : []
     : location.pathname === '/login'
       ? []
       : [{ title: t('nav.signin'), href: '/login' }];
@@ -39,15 +26,19 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg shadow-sm">
       <div className="container flex items-center justify-between h-16">
         <div>
-          <Link to="/" className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-islamic-green to-islamic-blue">
-            XamSaDine AI
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/logo.png" 
+              alt="XamSaDine AI" 
+              className="h-12 w-auto object-contain brightness-110"
+            />
           </Link>
         </div>
 
         <div className="flex items-center space-x-4">
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center space-x-6">
-            {user && navItems.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.title}
                 to={item.href}
@@ -56,11 +47,6 @@ const Navbar = () => {
                 {item.title}
               </Link>
             ))}
-            {!user && navItems.length > 0 && (
-              <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-islamic-green transition-colors">
-                {t('nav.signin')}
-              </Link>
-            )}
           </nav>
 
           {/* Language Selector */}
@@ -96,7 +82,7 @@ const Navbar = () => {
         {/* Mobile Menu */}
         <div className="md:hidden">
           <div className="flex items-center space-x-2">
-            {user && navItems.slice(0, 2).map((item) => (
+            {navItems.slice(0, user ? 2 : 1).map((item) => (
               <Link
                 key={item.title}
                 to={item.href}
@@ -105,11 +91,6 @@ const Navbar = () => {
                 {item.title}
               </Link>
             ))}
-            {!user && navItems.length > 0 && (
-              <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-islamic-green px-2">
-                {t('nav.signin')}
-              </Link>
-            )}
             {user && (
               <Button
                 variant="outline"

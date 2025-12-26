@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import type { FatwaSession } from "../../../../shared/schemas/fatwa.ts";
 import { OllamaClient } from "../clients/ollamaClient.ts";
-import { ragService } from "../../rag-service/rag.service.ts";
+import { ragService } from "../../../rag-service/rag.service.ts";
 
 // Lazy-load Ollama client
 function getOllamaClient(): OllamaClient | null {

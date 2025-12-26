@@ -6,7 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/auth/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
+import { PublicRoute } from "@/components/layout/PublicRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
@@ -24,6 +26,10 @@ import { AdminDashboard } from "@/pages/admin/Dashboard";
 import MediaPage from "./pages/MediaPage";
 import EventsPage from "./pages/EventsPage";
 import ShopPage from "./pages/ShopPage";
+import ManageEvents from "./pages/admin/ManageEvents";
+import ManageVideos from "./pages/admin/ManageVideos";
+import ManageProducts from "./pages/admin/ManageProducts";
+import ManageDaily from "./pages/admin/ManageDaily";
 
 const queryClient = new QueryClient();
 
@@ -36,26 +42,45 @@ const App = () => (
         <LanguageProvider>
           <AuthProvider>
             <BrowserRouter>
-              <AppShell>
-                <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
+              <Routes>
+                <Route 
+                  path="/" 
+                  element={
+                    <PublicRoute>
+                      <AppShell><Index /></AppShell>
+                    </PublicRoute>
+                  } 
+                />
+                <Route path="/login" element={<AppShell><Login /></AppShell>} />
                 <Route
                   path="/dashboard"
                   element={
                     <ProtectedRoute>
-                      <Dashboard />
+                      <DashboardLayout>
+                        <Dashboard />
+                      </DashboardLayout>
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/fatwa" element={<Fatwa />} />
-                <Route path="/fiqh" element={<Fiqh />} />
-                <Route path="/language" element={<Language />} />
+                <Route path="/fatwa" element={<AppShell><Fatwa /></AppShell>} />
+                <Route path="/fiqh" element={<AppShell><Fiqh /></AppShell>} />
+                <Route
+                  path="/language"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout>
+                        <Language />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/circle"
                   element={
                     <ProtectedRoute adminOnly>
-                      <CircleKnowledge />
+                      <DashboardLayout>
+                        <CircleKnowledge />
+                      </DashboardLayout>
                     </ProtectedRoute>
                   }
                 />
@@ -63,7 +88,9 @@ const App = () => (
                   path="/chat"
                   element={
                     <ProtectedRoute>
-                      <ChatInterface />
+                      <DashboardLayout>
+                        <ChatInterface />
+                      </DashboardLayout>
                     </ProtectedRoute>
                   }
                 />
@@ -71,7 +98,9 @@ const App = () => (
                   path="/admin"
                   element={
                     <ProtectedRoute adminOnly>
-                      <AdminDashboard />
+                      <DashboardLayout>
+                        <AdminDashboard />
+                      </DashboardLayout>
                     </ProtectedRoute>
                   }
                 />
@@ -79,7 +108,49 @@ const App = () => (
                   path="/admin/config"
                   element={
                     <ProtectedRoute adminOnly>
-                      <AdminConfig />
+                      <DashboardLayout>
+                        <AdminConfig />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/events"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <DashboardLayout>
+                        <ManageEvents />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/videos"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <DashboardLayout>
+                        <ManageVideos />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/products"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <DashboardLayout>
+                        <ManageProducts />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/daily"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <DashboardLayout>
+                        <ManageDaily />
+                      </DashboardLayout>
                     </ProtectedRoute>
                   }
                 />
@@ -87,17 +158,45 @@ const App = () => (
                   path="/documents"
                   element={
                     <ProtectedRoute adminOnly>
-                      <DocumentUpload />
+                      <DashboardLayout>
+                        <DocumentUpload />
+                      </DashboardLayout>
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/media" element={<MediaPage />} />
-                <Route path="/events" element={<EventsPage />} />
-                <Route path="/shop" element={<ShopPage />} />
+                <Route
+                  path="/media"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout>
+                        <MediaPage />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/events"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout>
+                        <EventsPage />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shop"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout>
+                        <ShopPage />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 {/* Catch-all */}
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<AppShell><NotFound /></AppShell>} />
                 </Routes>
-              </AppShell>
             </BrowserRouter>
           </AuthProvider>
         </LanguageProvider>

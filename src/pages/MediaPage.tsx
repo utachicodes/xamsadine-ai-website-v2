@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { EcosystemService } from '@/services/ecosystem';
 import { MediaContent } from '@/types/ecosystem';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlayCircle, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { MOCK_VIDEOS } from '@/lib/mock-data';
 
 export default function MediaPage() {
+    const { t } = useLanguage();
     const [videos, setVideos] = useState<MediaContent[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('all');
@@ -22,9 +24,17 @@ export default function MediaPage() {
         try {
             const audience = activeTab === 'all' ? undefined : activeTab;
             const data = await EcosystemService.getVideos(audience);
-            setVideos(data);
+            const filteredVideos = activeTab === 'all' 
+                ? MOCK_VIDEOS 
+                : MOCK_VIDEOS.filter(v => v.audience === activeTab);
+            setVideos(data.length > 0 ? data : filteredVideos);
         } catch (error) {
-            toast.error("Failed to load videos");
+            // Use mock data for now
+            console.warn('Using mock videos data');
+            const filteredVideos = activeTab === 'all' 
+                ? MOCK_VIDEOS 
+                : MOCK_VIDEOS.filter(v => v.audience === activeTab);
+            setVideos(filteredVideos);
         } finally {
             setLoading(false);
         }
@@ -38,18 +48,25 @@ export default function MediaPage() {
     };
 
     return (
-        <div className="container mx-auto py-8">
-            <div className="flex flex-col mb-8 gap-4">
-                <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
-                    XamSaDine Media
-                </h1>
-                <p className="text-muted-foreground">
-                    Discover Islamic content curated for all ages.
-                </p>
-            </div>
+        <div className="flex-1">
+            <section className="container py-10 md:py-16 space-y-10">
+                <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <p className="inline-flex items-center text-xs uppercase tracking-[0.22em] text-islamic-dark/60 mb-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-islamic-gold mr-2" />
+                            {t('media.title')}
+                        </p>
+                        <h1 className="text-3xl md:text-4xl font-bold text-islamic-dark">
+                            {t('media.subtitle')}
+                        </h1>
+                        <p className="mt-2 text-islamic-dark/70 max-w-xl">
+                            {t('media.intro')}
+                        </p>
+                    </div>
+                </header>
 
             <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-full">
-                <TabsList className="mb-8">
+                <TabsList className="mb-8 bg-white/60 backdrop-blur-sm">
                     <TabsTrigger value="all">All</TabsTrigger>
                     <TabsTrigger value="kids">Kids</TabsTrigger>
                     <TabsTrigger value="teens">Teens</TabsTrigger>
@@ -58,40 +75,46 @@ export default function MediaPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {loading ? (
-                        <p>Loading content...</p>
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-islamic-dark/70">{t('media.loading')}</p>
+                        </div>
+                    ) : videos.length === 0 ? (
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-islamic-dark/70">{t('media.empty')}</p>
+                        </div>
                     ) : videos.map((video) => (
-                        <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 border-none bg-card/50 backdrop-blur-sm">
-                            <div className="aspect-video relative bg-slate-900 group cursor-pointer" onClick={() => handleWatch(video)}>
+                        <div key={video.id} className="islamic-card overflow-hidden hover:scale-[1.02] transition-transform">
+                            <div className="aspect-video relative bg-islamic-dark/10 group cursor-pointer overflow-hidden rounded-t-lg" onClick={() => handleWatch(video)}>
                                 {video.thumbnail_url ? (
-                                    <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                    <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
                                 ) : (
-                                    <div className="flex items-center justify-center h-full text-slate-500">
+                                    <div className="flex items-center justify-center h-full text-islamic-dark/40">
                                         <PlayCircle size={48} />
                                     </div>
                                 )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <PlayCircle className="w-16 h-16 text-white" />
+                                </div>
                                 <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white flex items-center gap-1">
                                     <Clock size={12} />
                                     {Math.floor((video.duration_seconds || 0) / 60)} min
                                 </div>
                             </div>
-                            <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <CardTitle className="text-lg line-clamp-1">{video.title}</CardTitle>
-                                    <Badge variant="secondary">{video.language}</Badge>
+                            <div className="p-6 space-y-3">
+                                <div className="flex justify-between items-start gap-2">
+                                    <h3 className="text-lg font-semibold text-islamic-dark line-clamp-2">{video.title}</h3>
+                                    <Badge className="bg-islamic-gold/10 text-islamic-gold border-islamic-gold/20">{video.language}</Badge>
                                 </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground line-clamp-2">{video.description}</p>
-                            </CardContent>
-                            <CardFooter>
-                                <Button className="w-full gap-2" onClick={() => handleWatch(video)}>
-                                    <PlayCircle size={16} /> Watch Now
+                                <p className="text-sm text-islamic-dark/70 line-clamp-2">{video.description}</p>
+                                <Button className="w-full gap-2 btn-islamic" onClick={() => handleWatch(video)}>
+                                    <PlayCircle size={16} /> {t('media.watch')}
                                 </Button>
-                            </CardFooter>
-                        </Card>
+                            </div>
+                        </div>
                     ))}
                 </div>
             </Tabs>
+            </section>
         </div>
     );
 }
