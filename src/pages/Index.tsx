@@ -1,7 +1,7 @@
 import * as React from 'react';
 import HeroSection from '@/components/HeroSection';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Calendar, BookOpen, Sparkles, ArrowRight } from 'lucide-react';
+import { MessageSquare, Calendar, BookOpen, Sparkles, ArrowRight, Library } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
@@ -25,7 +25,7 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <Link to="/fatwa" className="islamic-card p-6 hover:scale-105 transition-transform">
                   <div className="w-12 h-12 rounded-full bg-islamic-green/10 flex items-center justify-center mb-4">
                     <MessageSquare className="w-6 h-6 text-islamic-green" />
@@ -56,6 +56,17 @@ const Index = () => {
                   <p className="text-islamic-dark/70 text-sm mb-3">{t('index.fiqh_map_desc')}</p>
                   <span className="text-sm text-islamic-gold font-medium inline-flex items-center gap-1">
                     {t('index.explore')} <ArrowRight className="w-4 h-4" />
+                  </span>
+                </Link>
+
+                <Link to="/library" className="islamic-card p-6 hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-full bg-islamic-teal/10 flex items-center justify-center mb-4">
+                    <Library className="w-6 h-6 text-islamic-teal" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Digital Library</h3>
+                  <p className="text-islamic-dark/70 text-sm mb-3">Access Islamic books, PDFs, and educational resources</p>
+                  <span className="text-sm text-islamic-teal font-medium inline-flex items-center gap-1">
+                    Browse books <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
               </div>

@@ -30,6 +30,8 @@ import ManageEvents from "./pages/admin/ManageEvents";
 import ManageVideos from "./pages/admin/ManageVideos";
 import ManageProducts from "./pages/admin/ManageProducts";
 import ManageDaily from "./pages/admin/ManageDaily";
+import Library from "./pages/Library";
+import ManageLibrary from "./pages/admin/ManageLibrary";
 
 const queryClient = new QueryClient();
 
@@ -190,6 +192,26 @@ const App = () => (
                     <ProtectedRoute>
                       <DashboardLayout>
                         <ShopPage />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/library"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout>
+                        <Library />
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/library"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <DashboardLayout>
+                        <ManageLibrary />
                       </DashboardLayout>
                     </ProtectedRoute>
                   }

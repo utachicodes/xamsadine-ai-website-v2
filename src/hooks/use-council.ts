@@ -71,9 +71,11 @@ export function useCouncil() {
         mutationFn: async ({ query, useRAG = true }: { query: string; useRAG?: boolean }) => {
             setIsProcessing(true);
             try {
+                // Get madhab from localStorage
+                const madhab = localStorage.getItem('xamsadine-madhab') || 'maliki';
                 const response = await apiFetch(`${API_BASE}/ask`, {
                     method: 'POST',
-                    body: JSON.stringify({ query, useRAG })
+                    body: JSON.stringify({ query, useRAG, madhab })
                 });
                 if (!response.ok) throw new Error('Failed to ask council');
                 const data = await response.json();

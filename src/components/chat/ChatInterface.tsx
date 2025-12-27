@@ -99,12 +99,16 @@ export const ChatInterface = () => {
     setInput('');
     setIsLoading(true);
 
+    // Get madhab from localStorage
+    const madhab = localStorage.getItem('xamsadine-madhab') || 'maliki';
+
     try {
       const response = await apiFetch('/api/chat', {
         method: 'POST',
         body: JSON.stringify({ 
           message: userInput,
-          language: language 
+          language: language,
+          madhab: madhab
         }),
       });
 
@@ -154,26 +158,26 @@ export const ChatInterface = () => {
                 <img 
                   src="/logo.png" 
                   alt="XamSaDine AI" 
-                  className="h-16 w-auto object-contain mx-auto mb-8 brightness-110"
+                  className="h-16 w-auto object-contain mx-auto mb-8 brightness-110 dark:brightness-0 dark:invert"
                 />
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-2xl font-semibold text-gray-900 dark:text-slate-100 mb-2">
                   {t('chat.welcome')}
                 </h3>
-                <p className="text-base text-gray-600 mb-8">
+                <p className="text-base text-gray-600 dark:text-slate-300 mb-8">
                   {t('chat.welcome.subtitle')}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div className="p-4 rounded-lg bg-gray-50 border border-gray-100">
-                    <div className="font-medium text-gray-900 mb-1">{t('chat.feature1.title')}</div>
-                    <p className="text-gray-600 text-xs">{t('chat.feature1.desc')}</p>
+                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700">
+                    <div className="font-medium text-gray-900 dark:text-slate-100 mb-1">{t('chat.feature1.title')}</div>
+                    <p className="text-gray-600 dark:text-slate-300 text-xs">{t('chat.feature1.desc')}</p>
                   </div>
-                  <div className="p-4 rounded-lg bg-gray-50 border border-gray-100">
-                    <div className="font-medium text-gray-900 mb-1">{t('chat.feature2.title')}</div>
-                    <p className="text-gray-600 text-xs">{t('chat.feature2.desc')}</p>
+                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700">
+                    <div className="font-medium text-gray-900 dark:text-slate-100 mb-1">{t('chat.feature2.title')}</div>
+                    <p className="text-gray-600 dark:text-slate-300 text-xs">{t('chat.feature2.desc')}</p>
                   </div>
-                  <div className="p-4 rounded-lg bg-gray-50 border border-gray-100">
-                    <div className="font-medium text-gray-900 mb-1">{t('chat.feature3.title')}</div>
-                    <p className="text-gray-600 text-xs">{t('chat.feature3.desc')}</p>
+                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700">
+                    <div className="font-medium text-gray-900 dark:text-slate-100 mb-1">{t('chat.feature3.title')}</div>
+                    <p className="text-gray-600 dark:text-slate-300 text-xs">{t('chat.feature3.desc')}</p>
                   </div>
                 </div>
               </div>
@@ -186,7 +190,7 @@ export const ChatInterface = () => {
                     variant="ghost"
                     size="sm"
                     onClick={clearHistory}
-                    className="text-gray-500 hover:text-red-600 text-xs"
+                    className="text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 text-xs"
                   >
                     <Trash2 className="h-3 w-3 mr-1.5" />
                     {t('chat.clear_history')}
@@ -197,8 +201,8 @@ export const ChatInterface = () => {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`group px-4 py-4 hover:bg-gray-50/50 transition-colors ${
-                      message.role === 'user' ? 'bg-gray-50/30' : ''
+                    className={`group px-4 py-4 hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors ${
+                      message.role === 'user' ? 'bg-gray-50/30 dark:bg-slate-800/30' : ''
                     }`}
                   >
                     <div className="max-w-3xl mx-auto flex gap-4">
@@ -207,21 +211,21 @@ export const ChatInterface = () => {
                           <img 
                             src="/logo.png" 
                             alt="XamSaDine AI" 
-                            className="h-8 w-8 object-contain brightness-110"
+                            className="h-8 w-8 object-contain brightness-110 dark:brightness-0 dark:invert"
                           />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="prose prose-sm max-w-none">
-                          <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-gray-900">
+                          <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-gray-900 dark:text-slate-100">
                             {message.content}
                           </div>
                           {message.council && message.council.members.length > 0 && (
-                            <div className="mt-4 pt-4 border-t border-gray-200">
-                              <div className="text-xs font-semibold mb-2 text-gray-700">
+                            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+                              <div className="text-xs font-semibold mb-2 text-gray-700 dark:text-slate-300">
                                 {t('chat.council_consensus')}
                               </div>
-                              <div className="text-xs space-y-2 text-gray-600">
+                              <div className="text-xs space-y-2 text-gray-600 dark:text-slate-400">
                                 <div>
                                   <strong>{t('chat.council_members')}:</strong> {message.council.members.join(', ')}
                                 </div>
@@ -251,23 +255,23 @@ export const ChatInterface = () => {
                   </div>
                 ))}
                 {isLoading && (
-                  <div className="group px-4 py-4 hover:bg-gray-50/50 transition-colors">
+                  <div className="group px-4 py-4 hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors">
                     <div className="max-w-3xl mx-auto flex gap-4">
                       <div className="flex-shrink-0 mt-1">
                         <img 
                           src="/logo.png" 
                           alt="XamSaDine AI" 
-                          className="h-8 w-8 object-contain brightness-110"
+                          className="h-8 w-8 object-contain brightness-110 dark:brightness-0 dark:invert"
                         />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <div className="flex gap-1">
-                            <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                            <div className="h-1.5 w-1.5 bg-gray-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="h-1.5 w-1.5 bg-gray-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="h-1.5 w-1.5 bg-gray-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                           </div>
-                          <span className="text-sm text-gray-500">{t('chat.thinking')}</span>
+                          <span className="text-sm text-gray-500 dark:text-slate-400">{t('chat.thinking')}</span>
                         </div>
                       </div>
                     </div>
@@ -281,16 +285,16 @@ export const ChatInterface = () => {
       </div>
 
       {/* Input - Claude-inspired */}
-      <div className="border-t border-gray-200 bg-white">
+      <div className="border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <form onSubmit={handleSubmit} className="relative">
-            <div className="flex items-end gap-2 bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-islamic-primary-green focus-within:ring-1 focus-within:ring-islamic-primary-green/20 transition-all">
+            <div className="flex items-end gap-2 bg-gray-50 dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 focus-within:border-islamic-primary-green focus-within:ring-1 focus-within:ring-islamic-primary-green/20 transition-all">
               <Input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={t('chat.placeholder')}
-                className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[52px] text-[15px] px-4"
+                className="flex-1 bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[52px] text-[15px] px-4 text-gray-900 dark:text-slate-100 placeholder:text-gray-500 dark:placeholder:text-slate-400"
                 disabled={isLoading}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {

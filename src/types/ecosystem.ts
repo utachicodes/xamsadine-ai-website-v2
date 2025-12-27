@@ -4,6 +4,9 @@ export type AudienceLevel = 'kids' | 'teens' | 'adults';
 export type EventStatus = 'confirmed' | 'waitlist' | 'cancelled';
 export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'delivered';
 export type PaymentMethod = 'orange_money' | 'wave' | 'card' | 'cash';
+export type BookFormat = 'pdf' | 'epub' | 'mobi' | 'audio';
+export type BookCategory = 'quran' | 'hadith' | 'fiqh' | 'aqeedah' | 'seerah' | 'tafsir' | 'arabic' | 'dua' | 'general';
+export type BookLanguage = 'ar' | 'en' | 'fr' | 'wo';
 
 export interface UserActivity {
     id: string;
@@ -87,4 +90,32 @@ export interface OrderItem {
     product_id: string;
     quantity: number;
     unit_price: number;
+}
+
+export interface DigitalBook {
+    id: string;
+    title: string;
+    author: string;
+    description: string;
+    category: BookCategory;
+    language: BookLanguage;
+    format: BookFormat;
+    file_url: string;
+    cover_image_url?: string;
+    page_count?: number;
+    file_size_mb?: number;
+    isbn?: string;
+    publisher?: string;
+    publication_year?: number;
+    downloads: number;
+    featured: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface BookDownload {
+    id: string;
+    user_id: string;
+    book_id: string;
+    downloaded_at: string;
 }

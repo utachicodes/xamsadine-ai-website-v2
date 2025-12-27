@@ -180,7 +180,7 @@ Response:
     {
       "id": "doc-123",
       "title": "Islamic Finance Guide",
-      "uploadedAt": "2024-12-24T...",
+      "uploadedAt": "2025-12-26T...",
       "category": "islamic",
       "source": "..."
     }

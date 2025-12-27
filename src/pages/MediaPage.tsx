@@ -21,23 +21,26 @@ export default function MediaPage() {
 
     const loadVideos = async () => {
         setLoading(true);
-        try {
-            const audience = activeTab === 'all' ? undefined : activeTab;
-            const data = await EcosystemService.getVideos(audience);
-            const filteredVideos = activeTab === 'all' 
-                ? MOCK_VIDEOS 
-                : MOCK_VIDEOS.filter(v => v.audience === activeTab);
-            setVideos(data.length > 0 ? data : filteredVideos);
-        } catch (error) {
-            // Use mock data for now
-            console.warn('Using mock videos data');
-            const filteredVideos = activeTab === 'all' 
-                ? MOCK_VIDEOS 
-                : MOCK_VIDEOS.filter(v => v.audience === activeTab);
-            setVideos(filteredVideos);
-        } finally {
-            setLoading(false);
-        }
+        const audience = activeTab === 'all' ? undefined : activeTab;
+        const filteredVideos = activeTab === 'all' 
+            ? MOCK_VIDEOS 
+            : MOCK_VIDEOS.filter(v => v.audience === activeTab);
+        
+        // Use mock data immediately and stop loading
+        setVideos(filteredVideos);
+        setLoading(false);
+        
+        // Try to fetch from API in background (fire and forget)
+        (async () => {
+            try {
+                const data = await EcosystemService.getVideos(audience);
+                if (data.length > 0) {
+                    setVideos(data);
+                }
+            } catch (error) {
+                // Silently fail, already using mock data
+            }
+        })();
     };
 
     const handleWatch = (video: MediaContent) => {

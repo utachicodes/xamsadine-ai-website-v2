@@ -30,7 +30,7 @@ const Navbar = () => {
             <img 
               src="/logo.png" 
               alt="XamSaDine AI" 
-              className="h-12 w-auto object-contain brightness-110"
+              className="h-12 w-auto object-contain brightness-110 dark:brightness-0 dark:invert"
             />
           </Link>
         </div>
@@ -54,13 +54,13 @@ const Navbar = () => {
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as 'en' | 'fr' | 'wo')}
-              className="appearance-none bg-transparent border border-gray-300 rounded-md pl-3 pr-8 py-1.5 text-sm font-medium text-gray-600 hover:border-islamic-green focus:outline-none focus:ring-1 focus:ring-islamic-green transition-colors"
+              className="appearance-none bg-transparent border border-gray-300 dark:border-slate-700 rounded-md pl-3 pr-8 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 hover:border-islamic-green focus:outline-none focus:ring-1 focus:ring-islamic-green transition-colors"
             >
               <option value="en">EN</option>
               <option value="fr">FR</option>
               <option value="wo">WO</option>
             </select>
-            <Globe className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+            <Globe className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-slate-400 pointer-events-none" />
           </div>
 
           {/* Sign Out Button for logged-in users */}

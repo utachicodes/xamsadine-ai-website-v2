@@ -38,6 +38,36 @@
     --radius: 1rem;
   }
 
+  .dark {
+    --background: 222.2 47.4% 11.2%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 47.4% 11.2%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 152 69% 16%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 200 98% 23%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 152 69% 16%;
+  }
+
 @layer utilities {
   .animation-delay-2000 {
     animation-delay: 2s;
@@ -119,6 +149,151 @@
     @apply bg-islamic-light text-islamic-dark antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  .dark body {
+    @apply bg-slate-900 text-slate-100;
+  }
+
+  .dark .islamic-card {
+    background: rgba(15, 23, 42, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .dark .text-islamic-dark {
+    @apply text-slate-100;
+  }
+
+  .dark .text-islamic-dark\/70 {
+    @apply text-slate-300;
+  }
+
+  .dark .text-islamic-dark\/95 {
+    @apply text-slate-50;
+  }
+
+  .dark .text-islamic-dark\/90 {
+    @apply text-slate-100;
+  }
+
+  .dark .text-islamic-dark\/85 {
+    @apply text-slate-200;
+  }
+
+  .dark .text-islamic-dark\/80 {
+    @apply text-slate-300;
+  }
+
+  .dark .text-islamic-dark\/75 {
+    @apply text-slate-400;
+  }
+
+  .dark .text-islamic-dark\/60 {
+    @apply text-slate-500;
+  }
+
+  .dark .bg-islamic-light {
+    @apply bg-slate-900;
+  }
+
+  .dark .bg-gradient-to-br {
+    background: linear-gradient(to bottom right, rgba(15, 23, 42, 0.5), rgba(30, 41, 59, 0.3), rgba(15, 23, 42, 0.5));
+  }
+
+  .dark .bg-islamic-green\/10 {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+  }
+
+  .dark .bg-islamic-blue\/5 {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+  }
+
+  .dark .bg-islamic-gold\/10 {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+  }
+
+  .dark .bg-islamic-gold\/5 {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+  }
+
+  .dark .bg-islamic-cream\/30 {
+    background-color: rgba(241, 245, 249, 0.1) !important;
+  }
+
+  .dark .text-gray-900 {
+    @apply text-slate-100;
+  }
+
+  .dark .text-gray-800 {
+    @apply text-slate-200;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-slate-300;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-slate-400;
+  }
+
+  .dark .text-gray-500 {
+    @apply text-slate-400;
+  }
+
+  .dark .text-gray-400 {
+    @apply text-slate-500;
+  }
+
+  .dark .bg-gray-50 {
+    @apply bg-slate-800;
+  }
+
+  .dark .bg-gray-100 {
+    @apply bg-slate-700;
+  }
+
+  .dark .bg-white {
+    @apply bg-slate-900;
+  }
+
+  .dark .border-gray-200 {
+    @apply border-slate-700;
+  }
+
+  .dark .border-gray-100 {
+    @apply border-slate-700;
+  }
+
+  .dark .border-gray-300 {
+    @apply border-slate-700;
+  }
+
+  .dark .bg-green-50 {
+    @apply bg-green-900/20;
+  }
+
+  .dark .text-green-800 {
+    @apply text-green-300;
+  }
+
+  .dark .text-green-700 {
+    @apply text-green-300;
+  }
+
+  .dark .border-green-600 {
+    @apply border-green-500;
+  }
+
+  .dark .bg-red-50 {
+    @apply bg-red-900/20;
+  }
+
+  .dark .text-red-800 {
+    @apply text-red-300;
+  }
+
+  .dark .border-red-600 {
+    @apply border-red-500;
   }
   
   h1, h2, h3, h4, h5, h6 {

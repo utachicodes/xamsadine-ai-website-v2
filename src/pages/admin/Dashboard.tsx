@@ -179,6 +179,14 @@ export const AdminDashboard = () => {
               <Button
                 variant="islamicOutline"
                 className="w-full justify-start"
+                onClick={() => navigate('/admin/library')}
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Manage Library
+              </Button>
+              <Button
+                variant="islamicOutline"
+                className="w-full justify-start"
                 onClick={() => window.open('/api/council/health', '_blank')}
               >
                 <Activity className="mr-2 h-4 w-4" />

@@ -3,6 +3,14 @@ Translation Service API
 Provides REST endpoints for Wolof translation
 """
 
+import sys
+import io
+
+# Fix UTF-8 encoding for Windows console
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 from flask import Flask, request, jsonify
 from wolof_translator import get_translator
 import os

@@ -70,40 +70,49 @@ export const CircleKnowledge = () => {
     },
   ]);
 
-  const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([
-    {
-      id: 'hanafi_kb',
-      name: 'Hanafi Fiqh Knowledge Base',
-      description: 'Islamic jurisprudence according to Hanafi school of thought',
-      documents: 1250,
-      lastUpdated: '2024-01-15',
-      language: 'en',
-    },
-    {
-      id: 'maliki_kb',
-      name: 'Maliki Fiqh Knowledge Base',
-      description: 'Islamic jurisprudence according to Maliki school of thought',
-      documents: 980,
-      lastUpdated: '2024-01-14',
-      language: 'en',
-    },
-    {
-      id: 'shafi_kb',
-      name: 'Shafi\'i Fiqh Knowledge Base',
-      description: 'Islamic jurisprudence according to Shafi\'i school of thought',
-      documents: 1100,
-      lastUpdated: '2024-01-15',
-      language: 'en',
-    },
-    {
-      id: 'hanbali_kb',
-      name: 'Hanbali Fiqh Knowledge Base',
-      description: 'Islamic jurisprudence according to Hanbali school of thought',
-      documents: 890,
-      lastUpdated: '2024-01-13',
-      language: 'en',
-    },
-  ]);
+  const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>(() => {
+    const today = new Date();
+    const getRecentDate = (daysAgo: number) => {
+      const date = new Date(today);
+      date.setDate(date.getDate() - daysAgo);
+      return date.toISOString().split('T')[0];
+    };
+    
+    return [
+      {
+        id: 'hanafi_kb',
+        name: 'Hanafi Fiqh Knowledge Base',
+        description: 'Islamic jurisprudence according to Hanafi school of thought',
+        documents: 1250,
+        lastUpdated: getRecentDate(1),
+        language: 'en',
+      },
+      {
+        id: 'maliki_kb',
+        name: 'Maliki Fiqh Knowledge Base',
+        description: 'Islamic jurisprudence according to Maliki school of thought',
+        documents: 980,
+        lastUpdated: getRecentDate(2),
+        language: 'en',
+      },
+      {
+        id: 'shafi_kb',
+        name: 'Shafi\'i Fiqh Knowledge Base',
+        description: 'Islamic jurisprudence according to Shafi\'i school of thought',
+        documents: 1100,
+        lastUpdated: getRecentDate(1),
+        language: 'en',
+      },
+      {
+        id: 'hanbali_kb',
+        name: 'Hanbali Fiqh Knowledge Base',
+        description: 'Islamic jurisprudence according to Hanbali school of thought',
+        documents: 890,
+        lastUpdated: getRecentDate(3),
+        language: 'en',
+      },
+    ];
+  });
 
   const [editingModel, setEditingModel] = useState<Model | null>(null);
   const [newModel, setNewModel] = useState<Partial<Model>>({

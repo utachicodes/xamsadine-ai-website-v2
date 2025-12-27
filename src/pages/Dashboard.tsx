@@ -118,9 +118,28 @@ interface DailyData {
   fact: string;
 }
 
+const getCurrentDate = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+const getCurrentDateFormatted = (format: 'US' | 'EU' | 'ISO') => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  
+  switch (format) {
+    case 'US': return `${month}/${day}/${year}`;
+    case 'EU': return `${day}-${month}-${year}`;
+    case 'ISO': return `${year}-${month}-${day}`;
+    default: return `${year}-${month}-${day}`;
+  }
+};
+
 const MOCK_DAILY: DailyData = {
-  gregorianDate: "2025-01-01",
-  hijriDate: "19 Jumādā al-Ākhirah 1446",
+  gregorianDate: getCurrentDate(),
+  hijriDate: "25 Jumādā al-Thānī 1447",
   ayah: {
     reference: "Al-Baqarah 2:286",
     arabic: "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
@@ -136,8 +155,8 @@ const MOCK_DAILY: DailyData = {
 const MOCK_DAILY_BY_LANG: Record<LanguageCode, DailyData> = {
   en: MOCK_DAILY,
   fr: {
-    gregorianDate: "01/01/2025",
-    hijriDate: "19 Jumādā al-Ākhirah 1446",
+    gregorianDate: getCurrentDateFormatted('US'),
+    hijriDate: "25 Jumādā al-Thānī 1447",
     ayah: {
       reference: "Al-Baqara 2:286",
       arabic: "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
@@ -151,8 +170,8 @@ const MOCK_DAILY_BY_LANG: Record<LanguageCode, DailyData> = {
     fact: "Les cinq prières obligatoires rythment la journée du musulman, de l’aube à la nuit.",
   },
   wo: {
-    gregorianDate: "01-01-2025",
-    hijriDate: "19 Jumādā al-Ākhirah 1446",
+    gregorianDate: getCurrentDateFormatted('EU'),
+    hijriDate: "25 Jumādā al-Thānī 1447",
     ayah: {
       reference: "Al-Baqara 2:286",
       arabic: "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
@@ -340,31 +359,94 @@ const Dashboard: React.FC = () => {
     fetchDaily();
   }, [language]);
 
+  const [showReminder, setShowReminder] = React.useState(false);
+  const [prayerTimes, setPrayerTimes] = React.useState<{
+    fajr: string;
+    dhuhr: string;
+    asr: string;
+    maghrib: string;
+    isha: string;
+  } | null>(null);
+  const [loadingPrayers, setLoadingPrayers] = React.useState(false);
+
+  // Get user location and fetch today's prayer times
+  React.useEffect(() => {
+    const fetchTodayPrayerTimes = async () => {
+      setLoadingPrayers(true);
+      try {
+        const fetchForLocation = async (lat: number, lng: number) => {
+          const today = new Date();
+          const day = String(today.getDate()).padStart(2, '0');
+          const month = String(today.getMonth() + 1).padStart(2, '0');
+          const year = today.getFullYear();
+
+          try {
+            const response = await fetch(
+              `http://api.aladhan.com/v1/calendar/${year}/${month}?latitude=${lat}&longitude=${lng}&method=2`
+            );
+            const data = await response.json();
+            const dayData = data.data?.find((d: any) => d.date.gregorian.day === day);
+            if (dayData) {
+              setPrayerTimes({
+                fajr: dayData.timings.Fajr?.substring(0, 5) || '--:--',
+                dhuhr: dayData.timings.Dhuhr?.substring(0, 5) || '--:--',
+                asr: dayData.timings.Asr?.substring(0, 5) || '--:--',
+                maghrib: dayData.timings.Maghrib?.substring(0, 5) || '--:--',
+                isha: dayData.timings.Isha?.substring(0, 5) || '--:--',
+              });
+            }
+          } catch (err) {
+            console.error('Error fetching prayer times:', err);
+          }
+        };
+
+        // Try to get user location
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              await fetchForLocation(position.coords.latitude, position.coords.longitude);
+            },
+            () => {
+              // Default to Dakar, Senegal if location access denied
+              fetchForLocation(14.7167, -17.4677);
+            }
+          );
+        } else {
+          // Default to Dakar, Senegal if geolocation not available
+          fetchForLocation(14.7167, -17.4677);
+        }
+      } catch (error) {
+        console.error('Error fetching prayer times:', error);
+      } finally {
+        setLoadingPrayers(false);
+      }
+    };
+
+    fetchTodayPrayerTimes();
+  }, []);
+
   return (
-    <div className="flex-1">
-      <section className="container py-10 md:py-16 space-y-10">
-        <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="flex-1 overflow-hidden flex flex-col h-full">
+      <section className="container py-3 md:py-4 space-y-3 flex-1 flex flex-col min-h-0 justify-between">
+        <header className="mb-2">
           <div>
-            <p className="inline-flex items-center text-xs uppercase tracking-[0.22em] text-islamic-dark/60 mb-2">
+            <p className="inline-flex items-center text-xs uppercase tracking-[0.22em] text-islamic-dark/60 mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-islamic-gold mr-2" />
               {t.sectionLabel}
             </p>
-            <h1 className="text-3xl md:text-4xl font-bold text-islamic-dark">
+            <h1 className="text-xl md:text-2xl font-bold text-islamic-dark">
               {t.titlePrefix}{" "}
               <span className="text-gradient">{t.titleHighlight}</span>
             </h1>
-            <p className="mt-2 text-islamic-dark/70 max-w-xl">{t.intro}</p>
           </div>
-
-          <div className="flex items-center gap-3" />
         </header>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-3 flex-1 min-h-0">
           {/* Ayah / reminder */}
           <div className="islamic-card col-span-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-islamic-green/10 via-islamic-blue/5 to-islamic-gold/10 opacity-80 group-hover:opacity-100 transition-opacity" />
             <div className="absolute top-0 right-0 w-32 h-32 bg-islamic-gold/5 rounded-full blur-3xl -translate-y-16 translate-x-16" />
-            <div className="relative p-8 h-full flex flex-col justify-between space-y-6">
+            <div className="relative p-6 h-full flex flex-col justify-between space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-1 font-semibold">
@@ -379,14 +461,14 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <p className="font-arabic text-3xl md:text-4xl leading-relaxed text-islamic-dark/95 min-h-[4rem] text-right">
+              <div className="space-y-4 flex flex-col items-center justify-center">
+                <p className="font-arabic text-3xl md:text-4xl lg:text-5xl leading-relaxed text-islamic-dark/95 min-h-[4rem] text-center">
                   {daily?.ayah.arabic ?? (loadingDaily ? "…" : "")}
                 </p>
 
-                <div className="h-px bg-gradient-to-r from-transparent via-islamic-gold/30 to-transparent" />
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-islamic-gold/30 to-transparent" />
 
-                <p className="text-base text-islamic-dark/85 leading-relaxed italic">
+                <p className="text-base md:text-lg text-islamic-dark/85 leading-relaxed italic text-center max-w-2xl">
                   {daily?.ayah.translation ??
                     (loadingDaily ? t.ayahLoading : t.ayahError)}
                 </p>
@@ -395,94 +477,217 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Today summary */}
-          <div className="islamic-card p-6 flex flex-col justify-between relative overflow-hidden group">
+          <div className="islamic-card p-5 flex flex-col justify-between relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-islamic-blue/5 to-islamic-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-2 font-semibold">
+                  <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-1 font-semibold">
                     {t.todayLabel}
                   </p>
-                  <p className="font-semibold text-islamic-dark text-lg">
+                  <p className="font-semibold text-islamic-dark text-base">
                     {daily?.gregorianDate ? new Date(daily.gregorianDate).toLocaleDateString(language === 'fr' ? 'fr-FR' : language === 'wo' ? 'wo-SN' : 'en-US', { 
-                      weekday: 'long', 
+                      weekday: 'short', 
                       year: 'numeric', 
-                      month: 'long', 
+                      month: 'short', 
                       day: 'numeric' 
                     }) : ""}
                   </p>
-                  <p className="font-medium text-islamic-dark/80 mt-1 text-sm">
+                  <p className="font-medium text-islamic-dark/80 mt-1 text-xs">
                     {daily?.hijriDate ?? (loadingDaily ? t.loading : "")}
                   </p>
                 </div>
-                <div className="flex gap-2 text-islamic-gold">
-                  <div className="p-2 bg-islamic-gold/10 rounded-lg">
-                    <Sun className="w-5 h-5" />
+                <div className="flex gap-1 text-islamic-gold">
+                  <div className="p-1.5 bg-islamic-gold/10 rounded-lg">
+                    <Sun className="w-4 h-4" />
                   </div>
-                  <div className="p-2 bg-islamic-blue/10 rounded-lg">
-                    <MoonStar className="w-5 h-5" />
+                  <div className="p-1.5 bg-islamic-blue/10 rounded-lg">
+                    <MoonStar className="w-4 h-4" />
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-islamic-dark/70 mb-4 leading-relaxed">
+              <p className="text-xs text-islamic-dark/70 mb-3 leading-relaxed">
                 {t.todaySummary}
               </p>
-              <button className="btn-islamic w-full hover:scale-[1.02] transition-transform">
+              <button 
+                onClick={() => setShowReminder(!showReminder)}
+                className="btn-islamic w-full hover:scale-[1.02] transition-transform text-sm py-2"
+              >
                 {t.openReminder}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Duas, facts, quiz */}
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="islamic-card p-6 space-y-4 relative overflow-hidden group">
+        {/* Reminder Modal/Expanded */}
+        {showReminder && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowReminder(false)}>
+            <div className="islamic-card p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-islamic-dark">Today's Reminder</h2>
+                <button 
+                  onClick={() => setShowReminder(false)}
+                  className="text-islamic-dark/60 hover:text-islamic-dark"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="space-y-6">
+                {/* Prayer Times Summary */}
+                {prayerTimes && (
+                  <div className="p-4 bg-islamic-green/5 rounded-lg border border-islamic-green/20">
+                    <p className="text-sm font-semibold text-islamic-dark/60 mb-3">Today's Prayer Times</p>
+                    <div className="grid grid-cols-5 gap-2">
+                      <div className="text-center">
+                        <p className="text-xs text-islamic-dark/60 mb-1">Fajr</p>
+                        <p className="text-sm font-semibold text-islamic-dark">{prayerTimes.fajr}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-islamic-dark/60 mb-1">Dhuhr</p>
+                        <p className="text-sm font-semibold text-islamic-dark">{prayerTimes.dhuhr}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-islamic-dark/60 mb-1">Asr</p>
+                        <p className="text-sm font-semibold text-islamic-dark">{prayerTimes.asr}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-islamic-dark/60 mb-1">Maghrib</p>
+                        <p className="text-sm font-semibold text-islamic-dark">{prayerTimes.maghrib}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-islamic-dark/60 mb-1">Isha</p>
+                        <p className="text-sm font-semibold text-islamic-dark">{prayerTimes.isha}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Daily Action */}
+                <div className="p-4 bg-islamic-gold/5 rounded-lg border border-islamic-gold/20">
+                  <p className="text-sm font-semibold text-islamic-dark/60 mb-2">Today's Action</p>
+                  <p className="text-base text-islamic-dark/90 leading-relaxed">
+                    {language === 'en' 
+                      ? "Take a moment to reflect on today's ayah. Recite it in your prayers and contemplate its meaning throughout the day."
+                      : language === 'fr'
+                      ? "Prenez un moment pour réfléchir à l'ayah du jour. Récitez-la dans vos prières et méditez sur sa signification tout au long de la journée."
+                      : "Jël benn waxtu ngir xalaat ci aaya bu tey. Waxal ko ci sa njulli ak xalaat ci li mu tekki ci bés bii."}
+                  </p>
+                </div>
+
+                {/* Hadith */}
+                <div className="p-4 bg-islamic-blue/5 rounded-lg border border-islamic-blue/20">
+                  <p className="text-sm font-semibold text-islamic-dark/60 mb-2">Hadith of the Day</p>
+                  <p className="font-arabic text-lg text-islamic-dark/95 mb-3 text-right leading-relaxed">
+                    {language === 'en'
+                      ? "The Prophet (peace be upon him) said: 'The best of people are those who are most beneficial to people.'"
+                      : language === 'fr'
+                      ? "Le Prophète (paix sur lui) a dit : 'Les meilleurs des gens sont ceux qui sont les plus bénéfiques aux gens.'"
+                      : "Yonent bi (jàmm ak moom) nee na: 'Nit ñi gën a baax ñooñu ñi gën a jariñu nit ñi.'"}
+                  </p>
+                  <p className="text-xs text-islamic-dark/60">Source: Authentic Hadith</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Prayer Times, Duas, Facts, Quiz */}
+        <div className="grid gap-3 md:grid-cols-4 flex-1 min-h-0">
+          {/* Today's Prayer Times */}
+          <div className="islamic-card p-5 space-y-3 relative overflow-hidden group flex flex-col md:col-span-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-islamic-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 flex flex-col flex-1">
+              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-2 font-semibold">
+                Prayer Times
+              </p>
+              {loadingPrayers ? (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-xs text-islamic-dark/60">Loading...</p>
+                </div>
+              ) : prayerTimes ? (
+                <div className="flex-1 flex flex-col justify-center space-y-2">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs text-islamic-dark/70">Fajr</span>
+                    <span className="text-sm font-semibold text-islamic-dark">{prayerTimes.fajr}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs text-islamic-dark/70">Dhuhr</span>
+                    <span className="text-sm font-semibold text-islamic-dark">{prayerTimes.dhuhr}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs text-islamic-dark/70">Asr</span>
+                    <span className="text-sm font-semibold text-islamic-dark">{prayerTimes.asr}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs text-islamic-dark/70">Maghrib</span>
+                    <span className="text-sm font-semibold text-islamic-dark">{prayerTimes.maghrib}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-xs text-islamic-dark/70">Isha</span>
+                    <span className="text-sm font-semibold text-islamic-dark">{prayerTimes.isha}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-xs text-islamic-dark/60 text-center">Enable location to see prayer times</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="islamic-card p-5 space-y-3 relative overflow-hidden group flex flex-col md:col-span-1">
             <div className="absolute inset-0 bg-gradient-to-br from-islamic-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10">
-              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-3 font-semibold">
+            <div className="relative z-10 flex flex-col flex-1">
+              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-2 font-semibold">
                 {t.dailyDua}
               </p>
-              <p className="font-arabic text-2xl text-islamic-dark/95 mb-3 text-right leading-relaxed">
-                {daily?.dua.arabic ?? (loadingDaily ? "…" : "")}
-              </p>
-              <div className="h-px bg-gradient-to-r from-transparent via-islamic-green/20 to-transparent mb-3" />
-              <p className="text-sm text-islamic-dark/80 leading-relaxed">
-                {daily?.dua.translation ??
-                  (loadingDaily ? t.dailyDuaLoading : t.dailyDuaError)}
-              </p>
+              <div className="flex-1 flex flex-col justify-center">
+                <p className="font-arabic text-2xl md:text-3xl text-islamic-dark/95 mb-3 text-right leading-relaxed min-h-[3rem]">
+                  {daily?.dua.arabic ?? (loadingDaily ? "…" : "")}
+                </p>
+                <div className="h-px bg-gradient-to-r from-transparent via-islamic-green/20 to-transparent mb-2" />
+                <p className="text-sm text-islamic-dark/80 leading-relaxed">
+                  {daily?.dua.translation ??
+                    (loadingDaily ? t.dailyDuaLoading : t.dailyDuaError)}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="islamic-card p-6 space-y-3 relative overflow-hidden group">
+          <div className="islamic-card p-5 space-y-3 relative overflow-hidden group flex flex-col md:col-span-1">
             <div className="absolute inset-0 bg-gradient-to-br from-islamic-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10">
-              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-3 font-semibold">
+            <div className="relative z-10 flex flex-col flex-1">
+              <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 mb-2 font-semibold">
                 {t.smallFact}
               </p>
-              <p className="text-sm text-islamic-dark/80 leading-relaxed">
-                {daily?.fact ??
-                  (loadingDaily ? t.factLoading : t.factError)}
-              </p>
+              <div className="flex-1 flex items-center">
+                <p className="text-sm md:text-base text-islamic-dark/80 leading-relaxed">
+                  {daily?.fact ??
+                    (loadingDaily ? t.factLoading : t.factError)}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="islamic-card p-6 space-y-4 relative overflow-hidden group">
+          <div className="islamic-card p-5 space-y-3 relative overflow-hidden group flex flex-col md:col-span-1">
             <div className="absolute inset-0 bg-gradient-to-br from-islamic-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
+            <div className="relative z-10 flex flex-col flex-1">
+              <div className="flex items-center justify-between mb-2">
                 <div>
                   <p className="text-xs uppercase tracking-[0.16em] text-islamic-dark/60 font-semibold">
                     {t.weeklyQuiz}
                   </p>
-                  <p className="text-sm text-islamic-dark/80 mt-1">
+                  <p className="text-xs text-islamic-dark/80 mt-1">
                     {t.weeklyQuizSubtitle}
                   </p>
                 </div>
-                <div className="p-2 bg-islamic-gold/10 rounded-lg">
-                  <HelpCircle className="w-5 h-5 text-islamic-gold" />
+                <div className="p-1.5 bg-islamic-gold/10 rounded-lg">
+                  <HelpCircle className="w-4 h-4 text-islamic-gold" />
                 </div>
               </div>
-            <div className="flex flex-wrap gap-2 text-xs mb-2">
+            <div className="flex flex-wrap gap-1.5 text-xs mb-2">
               <button
                 type="button"
                 onClick={() => {
@@ -530,9 +735,9 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
 
-            <p className="text-sm text-islamic-dark/85">{quiz.question}</p>
+            <p className="text-xs text-islamic-dark/85">{quiz.question}</p>
 
-            <div className="space-y-2 mt-2">
+            <div className="space-y-1.5 mt-2">
               {quiz.options.map((option) => {
                 const selected = selectedOption === option;
                 const correct = submitted && option === quiz.correct;
@@ -546,7 +751,7 @@ const Dashboard: React.FC = () => {
                       setSelectedOption(option);
                       setSubmitted(false);
                     }}
-                    className={`w-full text-left text-xs md:text-sm px-3 py-2 rounded-full border transition-colors ${
+                    className={`w-full text-left text-xs px-2.5 py-1.5 rounded-full border transition-colors ${
                       correct
                         ? "border-green-600 bg-green-50 text-green-800"
                         : wrong
@@ -568,15 +773,15 @@ const Dashboard: React.FC = () => {
                 if (!selectedOption) return;
                 setSubmitted(true);
               }}
-              className="btn-islamic-outlined w-full mt-3 flex items-center justify-center gap-1"
+              className="btn-islamic-outlined w-full mt-2 flex items-center justify-center gap-1 text-xs py-1.5"
             >
-              <Star className="w-4 h-4" />
+              <Star className="w-3 h-3" />
               {t.checkAnswer}
             </button>
 
             {submitted && (
               <p
-                className={`mt-2 text-xs ${
+                className={`mt-1.5 text-xs ${
                   isCorrect ? "text-green-700" : "text-islamic-dark/75"
                 }`}
               >

@@ -60,6 +60,12 @@ export const Sidebar = () => {
       adminOnly: false
     },
     { 
+      icon: BookOpen, 
+      label: t('nav.library'), 
+      path: '/library',
+      adminOnly: false
+    },
+    { 
       icon: Circle, 
       label: t('nav.circle'), 
       path: '/circle',
@@ -88,14 +94,14 @@ export const Sidebar = () => {
   const filteredItems = navItems.filter(item => !item.adminOnly || isAdmin);
 
   return (
-    <aside className="w-64 bg-white/90 backdrop-blur-sm border-r border-islamic-cream/50 h-screen sticky top-0 flex flex-col">
+    <aside className="w-64 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border-r border-islamic-cream/50 dark:border-slate-700/50 h-screen sticky top-0 flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-islamic-cream/50">
         <Link to="/dashboard" className="flex items-center">
           <img 
             src="/logo.png" 
             alt="XamSaDine AI" 
-            className="h-10 w-auto object-contain brightness-110"
+            className="h-10 w-auto object-contain brightness-110 dark:brightness-0 dark:invert"
           />
         </Link>
       </div>
@@ -112,8 +118,8 @@ export const Sidebar = () => {
               to={item.path}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-islamic-green/10 text-islamic-green border border-islamic-green/20'
-                  : 'text-islamic-dark/70 hover:bg-islamic-cream/30 hover:text-islamic-dark'
+                  ? 'bg-islamic-green/10 dark:bg-islamic-green/20 text-islamic-green dark:text-islamic-green border border-islamic-green/20 dark:border-islamic-green/30'
+                  : 'text-islamic-dark/70 dark:text-slate-300 hover:bg-islamic-cream/30 dark:hover:bg-slate-700/50 hover:text-islamic-dark dark:hover:text-slate-100'
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -124,30 +130,30 @@ export const Sidebar = () => {
       </nav>
 
       {/* Language Toggle */}
-      <div className="p-4 border-t border-islamic-cream/50">
-        <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-islamic-dark/70">
-          <Globe className="w-5 h-5 flex-shrink-0" />
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as 'en' | 'fr' | 'wo')}
-            className="flex-1 bg-transparent border-none text-sm font-medium text-islamic-dark focus:outline-none cursor-pointer appearance-none"
-          >
-            <option value="en">English</option>
-            <option value="fr">Français</option>
-            <option value="wo">Wolof</option>
-          </select>
-        </div>
+      <div className="p-4 border-t border-islamic-cream/50 dark:border-slate-700/50">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-lg text-islamic-dark/70 dark:text-slate-300">
+                <Globe className="w-5 h-5 flex-shrink-0" />
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as 'en' | 'fr' | 'wo')}
+                  className="flex-1 bg-transparent border-none text-sm font-medium text-islamic-dark dark:text-slate-300 focus:outline-none cursor-pointer appearance-none"
+                >
+                  <option value="en">English</option>
+                  <option value="fr">Français</option>
+                  <option value="wo">Wolof</option>
+                </select>
+              </div>
       </div>
 
       {/* Sign Out */}
-      <div className="p-4 border-t border-islamic-cream/50">
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-islamic-dark/70 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="font-medium">{t('nav.signout')}</span>
-        </button>
+      <div className="p-4 border-t border-islamic-cream/50 dark:border-slate-700/50">
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-islamic-dark/70 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors w-full"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-medium">{t('nav.signout')}</span>
+              </button>
       </div>
     </aside>
   );

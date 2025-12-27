@@ -40,6 +40,8 @@ if (existsSync(envPath)) {
 // Import routes after env is loaded
 const { postFatwa } = await import("./routes/fatwa.ts");
 const { getDaily } = await import("./routes/daily.ts");
+const libraryRoutesModule = await import("./routes/library.js");
+const libraryRoutes = libraryRoutesModule.default;
 import chatRoutes from "./chat.js";
 import { videoRoutes } from "../../video-service/src/routes/video.routes.js";
 import { eventRoutes } from "../../event-service/src/routes/event.routes.js";
@@ -387,6 +389,9 @@ app.use('/api/events', eventRoutes);
 
 // Commerce Service routes
 app.use('/api/shop', commerceRoutes);
+
+// Library Service routes
+app.use('/api/library', libraryRoutes);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });

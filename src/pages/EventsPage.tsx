@@ -19,16 +19,22 @@ export default function EventsPage() {
 
     const loadEvents = async () => {
         setLoading(true);
-        try {
-            const data = await EcosystemService.getEvents();
-            setEvents(data.length > 0 ? data : MOCK_EVENTS);
-        } catch (error) {
-            // Use mock data for now
-            console.warn('Using mock events data');
-            setEvents(MOCK_EVENTS);
-        } finally {
-            setLoading(false);
-        }
+        
+        // Use mock data immediately and stop loading
+        setEvents(MOCK_EVENTS);
+        setLoading(false);
+        
+        // Try to fetch from API in background (fire and forget)
+        (async () => {
+            try {
+                const data = await EcosystemService.getEvents();
+                if (data.length > 0) {
+                    setEvents(data);
+                }
+            } catch (error) {
+                // Silently fail, already using mock data
+            }
+        })();
     };
 
     const handleRegister = async (eventId: string) => {
